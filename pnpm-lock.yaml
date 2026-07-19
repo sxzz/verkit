@@ -39,11 +39,11 @@ importers:
         specifier: ^7.8.5
         version: 7.8.5
       tsdown:
-        specifier: ^0.22.11
-        version: 0.22.11(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)
+        specifier: ^0.22.12
+        version: 0.22.12(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)
       tsdown-preset-sxzz:
         specifier: ^0.6.0
-        version: 0.6.0(tsdown@0.22.11(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2))
+        version: 0.6.0(tsdown@0.22.12(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2))
       tsnapi:
         specifier: ^1.0.0
         version: 1.0.0(vitest@4.1.10(@types/node@26.1.1)(vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0)(yaml@2.9.0)))
@@ -1319,8 +1319,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
-  eslint-plugin-jsdoc@63.1.0:
-    resolution: {integrity: sha512-Vo0Mvhxi6B63gLIDI86QChkiKE79MxxM0I16gMN/HJn0rvJvMIG/nmn+KPcsx+GWYDQq6X0UfNRjRK1+97NYVg==}
+  eslint-plugin-jsdoc@63.2.0:
+    resolution: {integrity: sha512-tccz9igEV5mTKVAwo/KwXqKP7ENqa3a+LpRFuEPAP3k/+SXG4T0sOvA+c2wwTD/TLNrH9MCW4LIu4xEExkJdzg==}
     engines: {node: ^22.13.0 || >=24}
     peerDependencies:
       eslint: ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
@@ -2117,14 +2117,14 @@ packages:
     peerDependencies:
       tsdown: ^0.22.0
 
-  tsdown@0.22.11:
-    resolution: {integrity: sha512-BERdQpqAltv3vYGC0pE4n+mRGPIN91T/on+Ud73bYRkbptknelFm27tJgBBUz4RJ5d3VNeVH90HfjBo1Ouj8yQ==}
+  tsdown@0.22.12:
+    resolution: {integrity: sha512-IzGRfGwSsufXJWOcQ0tmECKMG/dbxhUwDOySTS7JE1AM8pkB9+bpcTPs8bTxxSNrSvGocSczrBlOh97tZObq9Q==}
     engines: {node: ^22.18.0 || >=24.11.0}
     hasBin: true
     peerDependencies:
       '@arethetypeswrong/core': ^0.18.1
-      '@tsdown/css': 0.22.11
-      '@tsdown/exe': 0.22.11
+      '@tsdown/css': 0.22.12
+      '@tsdown/exe': 0.22.12
       '@vitejs/devtools': '*'
       publint: ^0.3.8
       tsx: '*'
@@ -2228,6 +2228,10 @@ packages:
   validate-npm-package-name@5.0.1:
     resolution: {integrity: sha512-OljLrQ9SQdOUqTaQxqL5dEfZWrXExyyWsozYlAWFawPVNuD83igl7uJD2RTkNMbniIYgt8l81eCJGIdQF7avLQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
+
+  verkit@0.1.1:
+    resolution: {integrity: sha512-cZkglQpdcADQLTV88UEB8ogySmvby1H//AIbq8Se5BzUKYR8Jc6C05c1ABYgjyHkOakUG/GYmgUJdGktjMnxzw==}
+    engines: {node: ^22.18.0 || >=24.11.0}
 
   vite@8.1.5:
     resolution: {integrity: sha512-7ULLwsCdYx/nRyrpiEwvqb5TFHrMVZyBt+rg/OAXT7rgj/z+DtTDyKFeLAdDkubDVDKD8jOsndmy7m55XcfUsw==}
@@ -2788,7 +2792,7 @@ snapshots:
       eslint-plugin-command: 3.5.3(@typescript-eslint/typescript-estree@8.64.0(typescript@6.0.3))(@typescript-eslint/utils@8.64.0(eslint@10.7.0(jiti@2.7.0))(typescript@6.0.3))(eslint@10.7.0(jiti@2.7.0))
       eslint-plugin-de-morgan: 2.1.3(eslint@10.7.0(jiti@2.7.0))
       eslint-plugin-importer: 0.3.0(eslint@10.7.0(jiti@2.7.0))
-      eslint-plugin-jsdoc: 63.1.0(eslint@10.7.0(jiti@2.7.0))
+      eslint-plugin-jsdoc: 63.2.0(eslint@10.7.0(jiti@2.7.0))
       eslint-plugin-jsonc: 3.3.0(eslint@10.7.0(jiti@2.7.0))
       eslint-plugin-n: 18.2.2(eslint@10.7.0(jiti@2.7.0))(typescript@6.0.3)
       eslint-plugin-perfectionist: 5.10.0(eslint@10.7.0(jiti@2.7.0))(typescript@6.0.3)
@@ -3317,7 +3321,7 @@ snapshots:
     dependencies:
       eslint: 10.7.0(jiti@2.7.0)
 
-  eslint-plugin-jsdoc@63.1.0(eslint@10.7.0(jiti@2.7.0)):
+  eslint-plugin-jsdoc@63.2.0(eslint@10.7.0(jiti@2.7.0)):
     dependencies:
       '@es-joy/jsdoccomment': 0.88.0
       '@es-joy/resolve.exports': 1.2.0
@@ -4338,13 +4342,13 @@ snapshots:
     dependencies:
       typescript: 6.0.3
 
-  tsdown-preset-sxzz@0.6.0(tsdown@0.22.11(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)):
+  tsdown-preset-sxzz@0.6.0(tsdown@0.22.12(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)):
     dependencies:
       '@arethetypeswrong/core': 0.18.5
       publint: 0.3.21
-      tsdown: 0.22.11(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)
+      tsdown: 0.22.12(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2)
 
-  tsdown@0.22.11(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2):
+  tsdown@0.22.12(@arethetypeswrong/core@0.18.5)(publint@0.3.21)(typescript@6.0.3)(typescript@7.0.2):
     dependencies:
       ansis: 4.3.1
       cac: 7.0.0
@@ -4356,11 +4360,11 @@ snapshots:
       picomatch: 4.0.5
       rolldown: 1.2.0
       rolldown-plugin-dts: 0.27.12(rolldown@1.2.0)(typescript@6.0.3)(typescript@7.0.2)
-      semver: 7.8.5
       tinyexec: 1.2.4
       tinyglobby: 0.2.17
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
+      verkit: 0.1.1
     optionalDependencies:
       '@arethetypeswrong/core': 0.18.5
       publint: 0.3.21
@@ -4478,6 +4482,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   validate-npm-package-name@5.0.1: {}
+
+  verkit@0.1.1: {}
 
   vite@8.1.5(@types/node@26.1.1)(jiti@2.7.0)(yaml@2.9.0):
     dependencies:

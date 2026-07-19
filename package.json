@@ -63,7 +63,7 @@
     "prettier": "^3.9.5",
     "rolldown": "^1.2.0",
     "semver": "^7.8.5",
-    "tsdown": "^0.22.11",
+    "tsdown": "^0.22.12",
     "tsdown-preset-sxzz": "^0.6.0",
     "tsnapi": "^1.0.0",
     "typescript": "~6.0.3",
