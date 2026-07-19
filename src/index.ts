@@ -1,0 +1,81 @@
+export {
+  comparatorsIntersect,
+  normalizeComparator,
+  satisfiesComparator,
+} from './comparator.ts'
+export {
+  compare,
+  compareBuild,
+  compareMain,
+  comparePrerelease,
+  compareReversed,
+  compareWithOperator,
+  isEqual,
+  isGreater,
+  isGreaterOrEqual,
+  isLess,
+  isLessOrEqual,
+  isNotEqual,
+  sort,
+  sortReversed,
+} from './comparison.ts'
+export {
+  INCREMENT_TYPES,
+  SEMVER_SPEC_VERSION,
+  TRUNCATION_TYPES,
+} from './constants.ts'
+export {
+  compareIdentifiers,
+  compareIdentifiersReversed,
+} from './identifiers.ts'
+export {
+  findMaxSatisfying,
+  findMinimumForRange,
+  findMinSatisfying,
+  isGreaterThanRange,
+  isLessThanRange,
+  isOutsideRange,
+  isRangeSubset,
+  isValidRange,
+  normalizeRange,
+  parseRange,
+  rangesIntersect,
+  rangeToComparators,
+  satisfies,
+  simplifyRange,
+  tryParseRange,
+} from './range.ts'
+export {
+  clean,
+  coerce,
+  difference,
+  getBuild,
+  getMajor,
+  getMinor,
+  getPatch,
+  getPrerelease,
+  increment,
+  isValid,
+  normalize,
+  normalizeFull,
+  parse,
+  truncate,
+  tryParse,
+} from './version.ts'
+export type { RangeInput, SemVerRange } from './range.ts'
+export type {
+  CoerceOptions,
+  Comparison,
+  ComparisonOperator,
+  IncrementOptions,
+  IncrementType,
+  PrereleaseIdentifier,
+  RangeDirection,
+  RangeOptions,
+  SemVer,
+  SemVerComparator,
+  TruncationType,
+  VersionDifference,
+  VersionInput,
+  VersionOptions,
+} from './types.ts'
