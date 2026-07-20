@@ -154,7 +154,7 @@ Run `pnpm test:size` to reproduce the comparison.
 
 ## Benchmarks
 
-Measured on a MacBook Pro with an Apple M1 Ultra and 32 GB RAM. Higher is
+Measured on a MacBook Pro with an Apple M1 Max and 32 GB RAM. Higher is
 better.
 
 | Operation                 | verkit ops/s | semver ops/s | Faster       |
