@@ -1,7 +1,7 @@
 {
   "name": "verkit",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "packageManager": "pnpm@11.15.0",
   "description": "Fast, zero-dependency SemVer for ESM and TypeScript, with functional, tree-shakeable APIs.",
   "author": "Kevin Deng <sxzz@sxzz.moe>",
