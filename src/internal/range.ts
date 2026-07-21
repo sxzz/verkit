@@ -310,15 +310,15 @@ export function parseRange(
   let sets = raw
     .split('||')
     .map((part) => parseSimpleRange(part.trim(), parsedOptions))
-    .filter((set) => set.length > 0)
-  if (sets.length === 0) {
+    .filter((set) => set.length)
+  if (!sets.length) {
     throw new TypeError(`Range contains no valid comparator sets: ${raw}`)
   }
 
   if (sets.length > 1) {
     const first = sets[0]!
     sets = sets.filter((set) => set[0]?.value !== '<0.0.0-0')
-    if (sets.length === 0) sets = [first]
+    if (!sets.length) sets = [first]
     else if (sets.length > 1) {
       const any = sets.find((set) => set.length === 1 && set[0]?.value === '')
       if (any) sets = [any]
@@ -354,13 +354,15 @@ export function testComparatorSet(
   if (!set.every((comparator) => testParsedComparator(comparator, version))) {
     return false
   }
-  if (version.prerelease.length === 0 || options.includePrerelease) return true
+  if (!version.prerelease?.length || options.includePrerelease) {
+    return true
+  }
 
   return set.some((comparator) => {
     const allowed = comparator.version
     return (
       allowed !== null &&
-      allowed.prerelease.length > 0 &&
+      allowed.prerelease?.length &&
       allowed.major === version.major &&
       allowed.minor === version.minor &&
       allowed.patch === version.patch
@@ -388,7 +390,7 @@ function isSatisfiable(
 ): boolean {
   const remaining = [...comparators]
   let current = remaining.pop()
-  while (current && remaining.length > 0) {
+  while (current && remaining.length) {
     if (
       !remaining.every((other) =>
         parsedComparatorsIntersect(current!, other, options),

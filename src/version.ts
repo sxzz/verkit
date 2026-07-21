@@ -95,7 +95,6 @@ export function truncate(
     major: parsed.major,
     minor: truncation === 'major' ? 0 : parsed.minor,
     patch: truncation === 'major' || truncation === 'minor' ? 0 : parsed.patch,
-    prerelease: [],
   })
 }
 
@@ -110,8 +109,8 @@ export function difference(
 
   const high = comparison > 0 ? leftVersion : rightVersion
   const low = comparison > 0 ? rightVersion : leftVersion
-  const highHasPrerelease = high.prerelease.length > 0
-  const lowHasPrerelease = low.prerelease.length > 0
+  const highHasPrerelease = high.prerelease?.length
+  const lowHasPrerelease = low.prerelease?.length
   if (lowHasPrerelease && !highHasPrerelease) {
     if (low.patch === 0 && low.minor === 0) return 'major'
     if (compareMainParsed(low, high) === 0) {
@@ -158,7 +157,7 @@ export function getPrerelease(
   options: VersionOptions = {},
 ): PrereleaseIdentifier[] | null {
   const parsed = tryParse(version, options)
-  return parsed?.prerelease.length ? [...parsed.prerelease] : null
+  return parsed ? [...(parsed.prerelease || [])] : null
 }
 
 export function getBuild(
@@ -166,5 +165,5 @@ export function getBuild(
   options: VersionOptions = {},
 ): string[] | null {
   const parsed = tryParse(version, options)
-  return parsed ? [...parsed.build] : null
+  return parsed ? [...(parsed.build || [])] : null
 }

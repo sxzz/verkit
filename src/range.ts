@@ -103,20 +103,19 @@ export function findMinSatisfying<T extends VersionInput>(
 }
 
 function nextVersionAfter(version: SemVer): SemVer {
-  const comparable =
-    version.prerelease.length === 0
-      ? formatComparableVersion({
-          major: version.major,
-          minor: version.minor,
-          patch: version.patch + 1,
-          prerelease: [],
-        })
-      : formatComparableVersion({
-          major: version.major,
-          minor: version.minor,
-          patch: version.patch,
-          prerelease: [...version.prerelease, 0],
-        })
+  const { prerelease } = version
+  const comparable = prerelease?.length
+    ? formatComparableVersion({
+        major: version.major,
+        minor: version.minor,
+        patch: version.patch,
+        prerelease: [...prerelease, 0],
+      })
+    : formatComparableVersion({
+        major: version.major,
+        minor: version.minor,
+        patch: version.patch + 1,
+      })
   return parse(comparable)
 }
 
@@ -339,7 +338,7 @@ function samePrereleaseTuple(
   const candidate = comparator.version
   return (
     candidate !== null &&
-    candidate.prerelease.length > 0 &&
+    !!candidate.prerelease?.length &&
     candidate.major === version.major &&
     candidate.minor === version.minor &&
     candidate.patch === version.patch
@@ -401,17 +400,18 @@ function simpleRangeSubset(
   }
 
   let needsLowerPrerelease =
-    lower && !options.includePrerelease && lower.version!.prerelease.length > 0
+    lower && !options.includePrerelease && lower.version!.prerelease?.length
       ? lower.version!
       : null
   let needsUpperPrerelease =
-    upper && !options.includePrerelease && upper.version!.prerelease.length > 0
+    upper && !options.includePrerelease && upper.version!.prerelease?.length
       ? upper.version!
       : null
+  const upperPrerelease = needsUpperPrerelease?.prerelease
   if (
-    needsUpperPrerelease?.prerelease.length === 1 &&
+    upperPrerelease?.length === 1 &&
     upper?.operator === '<' &&
-    needsUpperPrerelease.prerelease[0] === 0
+    upperPrerelease[0] === 0
   ) {
     needsUpperPrerelease = null
   }

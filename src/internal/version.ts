@@ -30,7 +30,7 @@ export function formatComparableVersion(
   version: Pick<SemVer, 'major' | 'minor' | 'patch' | 'prerelease'>,
 ): string {
   const base = `${version.major}.${version.minor}.${version.patch}`
-  return version.prerelease.length > 0
+  return version.prerelease?.length
     ? `${base}-${version.prerelease.join('.')}`
     : base
 }
@@ -39,7 +39,7 @@ export function formatFullVersion(
   version: Pick<SemVer, 'build' | 'major' | 'minor' | 'patch' | 'prerelease'>,
 ): string {
   const comparable = formatComparableVersion(version)
-  return version.build.length > 0
+  return version.build?.length
     ? `${comparable}+${version.build.join('.')}`
     : comparable
 }
@@ -82,8 +82,8 @@ export function parse(
         }
         return identifier
       })
-    : []
-  const build = match[5] ? match[5].split('.') : []
+    : undefined
+  const build = match[5]?.split('.')
   return {
     build,
     major,
@@ -124,13 +124,15 @@ export function comparePrereleaseParsed(
   left: SemVer,
   right: SemVer,
 ): Comparison {
-  if (left.prerelease.length > 0 && right.prerelease.length === 0) return -1
-  if (left.prerelease.length === 0 && right.prerelease.length > 0) return 1
-  if (left.prerelease.length === 0 && right.prerelease.length === 0) return 0
+  const leftPrerelease = left.prerelease
+  const rightPrerelease = right.prerelease
+  if (leftPrerelease?.length && !rightPrerelease?.length) return -1
+  if (!leftPrerelease?.length && rightPrerelease?.length) return 1
+  if (!leftPrerelease?.length && !rightPrerelease?.length) return 0
 
   for (let index = 0; ; index++) {
-    const leftIdentifier = left.prerelease[index]
-    const rightIdentifier = right.prerelease[index]
+    const leftIdentifier = leftPrerelease?.[index]
+    const rightIdentifier = rightPrerelease?.[index]
     if (leftIdentifier === undefined && rightIdentifier === undefined) return 0
     if (rightIdentifier === undefined) return 1
     if (leftIdentifier === undefined) return -1
@@ -149,8 +151,8 @@ export function compareBuildParsed(left: SemVer, right: SemVer): Comparison {
   if (precedence !== 0) return precedence
 
   for (let index = 0; ; index++) {
-    const leftIdentifier = left.build[index]
-    const rightIdentifier = right.build[index]
+    const leftIdentifier = left.build?.[index]
+    const rightIdentifier = right.build?.[index]
     if (leftIdentifier === undefined && rightIdentifier === undefined) return 0
     if (rightIdentifier === undefined) return 1
     if (leftIdentifier === undefined) return -1
@@ -179,33 +181,32 @@ function incrementPrerelease(
   identifierBase: 0 | 1 | false | undefined,
 ): void {
   const base = Number(identifierBase) ? 1 : 0
-  if (version.prerelease.length === 0) {
-    version.prerelease = [base]
-  } else {
+  let prerelease = version.prerelease
+  if (prerelease?.length) {
     let foundNumeric = false
-    for (let index = version.prerelease.length - 1; index >= 0; index--) {
-      if (typeof version.prerelease[index] === 'number') {
-        version.prerelease[index] = Number(version.prerelease[index]) + 1
+    for (let index = prerelease.length - 1; index >= 0; index--) {
+      if (typeof prerelease[index] === 'number') {
+        prerelease[index] = Number(prerelease[index]) + 1
         foundNumeric = true
         break
       }
     }
     if (!foundNumeric) {
-      if (
-        identifier === version.prerelease.join('.') &&
-        identifierBase === false
-      ) {
+      if (identifier === prerelease.join('.') && identifierBase === false) {
         throw new Error('invalid increment argument: identifier already exists')
       }
-      version.prerelease.push(base)
+      prerelease.push(base)
     }
+  } else {
+    prerelease = [base]
+    version.prerelease = prerelease
   }
 
   if (!identifier) return
   const reset: PrereleaseIdentifier[] =
     identifierBase === false ? [identifier] : [identifier, base]
-  if (isPrereleasePrefix(version.prerelease, identifier)) {
-    const next = version.prerelease[identifier.split('.').length]
+  if (isPrereleasePrefix(prerelease, identifier)) {
+    const next = prerelease[identifier.split('.').length]
     if (Number.isNaN(Number(next))) version.prerelease = reset
   } else {
     version.prerelease = reset
@@ -220,59 +221,59 @@ function incrementMutable(
 ): void {
   switch (release) {
     case 'premajor':
-      version.prerelease = []
+      version.prerelease = undefined
       version.patch = 0
       version.minor = 0
       version.major++
       incrementPrerelease(version, identifier, identifierBase)
       break
     case 'preminor':
-      version.prerelease = []
+      version.prerelease = undefined
       version.patch = 0
       version.minor++
       incrementPrerelease(version, identifier, identifierBase)
       break
     case 'prepatch':
-      version.prerelease = []
+      version.prerelease = undefined
       incrementMutable(version, 'patch', identifier, identifierBase)
       incrementPrerelease(version, identifier, identifierBase)
       break
     case 'prerelease':
-      if (version.prerelease.length === 0) {
+      if (!version.prerelease?.length) {
         incrementMutable(version, 'patch', identifier, identifierBase)
       }
       incrementPrerelease(version, identifier, identifierBase)
       break
     case 'release':
-      if (version.prerelease.length === 0) {
+      if (!version.prerelease?.length) {
         throw new Error(
           `version ${formatFullVersion(version)} is not a prerelease`,
         )
       }
-      version.prerelease = []
+      version.prerelease = undefined
       break
     case 'major':
       if (
         version.minor !== 0 ||
         version.patch !== 0 ||
-        version.prerelease.length === 0
+        !version.prerelease?.length
       ) {
         version.major++
       }
       version.minor = 0
       version.patch = 0
-      version.prerelease = []
+      version.prerelease = undefined
       break
     case 'minor':
-      if (version.patch !== 0 || version.prerelease.length === 0) {
+      if (version.patch !== 0 || !version.prerelease?.length) {
         version.minor++
       }
       version.patch = 0
-      version.prerelease = []
+      version.prerelease = undefined
       break
     case 'patch':
-      if (version.prerelease.length === 0) version.patch++
-      version.prerelease = []
+      if (!version.prerelease?.length) version.patch++
+      version.prerelease = undefined
       break
     case 'pre':
       incrementPrerelease(version, identifier, identifierBase)
@@ -303,11 +304,11 @@ export function incrementParsedVersion(
   }
 
   const mutable: SemVer = {
-    build: [...parsed.build],
+    build: parsed.build ? [...parsed.build] : undefined,
     major: parsed.major,
     minor: parsed.minor,
     patch: parsed.patch,
-    prerelease: [...parsed.prerelease],
+    prerelease: parsed.prerelease ? [...parsed.prerelease] : undefined,
   }
   incrementMutable(mutable, release, identifier, identifierBase)
   return formatComparableVersion(mutable)

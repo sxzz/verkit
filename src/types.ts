@@ -19,11 +19,11 @@ export interface IncrementOptions extends VersionOptions {
 export type PrereleaseIdentifier = number | string
 
 export interface SemVer {
-  build: string[]
   major: number
   minor: number
   patch: number
-  prerelease: PrereleaseIdentifier[]
+  prerelease?: PrereleaseIdentifier[] | undefined
+  build?: string[] | undefined
 }
 
 export interface SemVerComparator {

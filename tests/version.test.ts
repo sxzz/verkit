@@ -25,6 +25,7 @@ import type {
   IncrementOptions,
   IncrementType,
   PrereleaseIdentifier,
+  SemVer,
   TruncationType,
   VersionDifference,
   VersionOptions,
@@ -104,7 +105,7 @@ describe('version parsing and accessors', () => {
     expect(tryParse('not a version')).toBeNull()
 
     version.patch = 4
-    version.prerelease[0] = 'beta'
+    version.prerelease![0] = 'beta'
     version.build = ['next']
 
     expect(isValid(version)).toBe(true)
@@ -121,6 +122,19 @@ describe('version parsing and accessors', () => {
     expect(getBuild(version)).toEqual(['next'])
   })
 
+  it('accepts SemVer objects without empty identifier arrays', () => {
+    const version: SemVer = { major: 1, minor: 2, patch: 3 }
+    const parsed = parse('1.2.3')
+
+    expect(parse(version)).toBe(version)
+    expect(parsed.prerelease).toBeUndefined()
+    expect(parsed.build).toBeUndefined()
+    expect(normalizeFull(version)).toBe('1.2.3')
+    expect(increment(version, 'patch')).toBe('1.2.4')
+    expect(getPrerelease(version)).toEqual([])
+    expect(getBuild(version)).toEqual([])
+  })
+
   it('accepts every valid node-semver fixture', () => {
     for (const row of validVersions as readonly ValidVersionCase[]) {
       const [version, major, minor, patch, prerelease, build] = row
@@ -133,9 +147,7 @@ describe('version parsing and accessors', () => {
       expect(getMajor(version)).toBe(major)
       expect(getMinor(version)).toBe(minor)
       expect(getPatch(version)).toBe(patch)
-      expect(getPrerelease(version)).toEqual(
-        prerelease.length ? prerelease : null,
-      )
+      expect(getPrerelease(version)).toEqual(prerelease)
       expect(getBuild(version)).toEqual(build)
     }
   })

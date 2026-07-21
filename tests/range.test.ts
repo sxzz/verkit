@@ -82,8 +82,14 @@ describe('range parsing and satisfaction', () => {
     expect(second.sets[0]![0]!.version!.patch).toBe(3)
   })
 
-  it('accepts parsed SemVer objects', () => {
-    expect(satisfies(parse('1.5.0'), '^1.2.3')).toBe(true)
+  it('accepts SemVer objects with optional identifier arrays', () => {
+    expect(satisfies({ major: 1, minor: 5, patch: 0 }, '^1.2.3')).toBe(true)
+    expect(
+      satisfies(
+        { major: 1, minor: 5, patch: 0, prerelease: ['rc', 1] },
+        '^1.2.3',
+      ),
+    ).toBe(false)
   })
 
   it('normalizes every range fixture', () => {

@@ -35,10 +35,11 @@ function versionOptions(value: unknown): VersionOptions {
 describe('version comparison', () => {
   it('accepts parsed SemVer objects', () => {
     const left = parse('2.0.0+two')
-    const right = parse('1.0.0+one')
+    const right = { major: 1, minor: 0, patch: 0 }
 
     expect(compare(left, right)).toBe(1)
     expect(compareBuild(left, '2.0.0+one')).toBe(1)
+    expect(compareBuild(right, { ...right, build: ['one'] })).toBe(-1)
     expect(isGreater(left, right)).toBe(true)
   })
 

@@ -14,11 +14,11 @@ export interface RangeOptions extends VersionOptions {
   includePrerelease?: boolean;
 }
 export interface SemVer {
-  build: string[];
   major: number;
   minor: number;
   patch: number;
-  prerelease: PrereleaseIdentifier[];
+  prerelease?: PrereleaseIdentifier[] | undefined;
+  build?: string[] | undefined;
 }
 export interface SemVerComparator {
   operator: "" | "<" | "<=" | ">" | ">=";
