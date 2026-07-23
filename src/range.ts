@@ -104,18 +104,20 @@ export function findMinSatisfying<T extends VersionInput>(
 
 function nextVersionAfter(version: SemVer): SemVer {
   const { prerelease } = version
-  const comparable = prerelease?.length
-    ? formatComparableVersion({
-        major: version.major,
-        minor: version.minor,
-        patch: version.patch,
-        prerelease: [...prerelease, 0],
-      })
-    : formatComparableVersion({
-        major: version.major,
-        minor: version.minor,
-        patch: version.patch + 1,
-      })
+  const comparable = formatComparableVersion(
+    prerelease?.length
+      ? {
+          major: version.major,
+          minor: version.minor,
+          patch: version.patch,
+          prerelease: [...prerelease, 0],
+        }
+      : {
+          major: version.major,
+          minor: version.minor,
+          patch: version.patch + 1,
+        },
+  )
   return parse(comparable)
 }
 

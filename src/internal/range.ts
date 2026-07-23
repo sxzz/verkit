@@ -166,11 +166,11 @@ function replaceXRange(comparator: string, options: RangeOptions): string {
       const wildcardMinor = wildcardMajor || isWildcard(minor)
       const wildcardPatch = wildcardMinor || isWildcard(patch)
       if (operator === '=' && wildcardPatch) operator = ''
-      let prerelease = options.includePrerelease ? '-0' : ''
-
       if (wildcardMajor) {
         return operator === '>' || operator === '<' ? '<0.0.0-0' : '*'
       }
+
+      let prerelease = options.includePrerelease ? '-0' : ''
       if (operator && wildcardPatch) {
         if (wildcardMinor) minor = 0
         patch = 0
@@ -351,7 +351,7 @@ export function testComparatorSet(
   version: SemVer,
   options: RangeOptions,
 ): boolean {
-  if (!set.every((comparator) => testParsedComparator(comparator, version))) {
+  if (set.some((comparator) => !testParsedComparator(comparator, version))) {
     return false
   }
   if (!version.prerelease?.length || options.includePrerelease) {
@@ -392,8 +392,8 @@ function isSatisfiable(
   let current = remaining.pop()
   while (current && remaining.length) {
     if (
-      !remaining.every((other) =>
-        parsedComparatorsIntersect(current!, other, options),
+      remaining.some(
+        (other) => !parsedComparatorsIntersect(current!, other, options),
       )
     ) {
       return false
