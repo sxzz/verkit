@@ -1,9 +1,13 @@
 import { sort } from './comparison.ts'
-import { parseComparator, testParsedComparator } from './internal/comparator.ts'
+import {
+  comparatorAllowsPrerelease,
+  parseComparator,
+  testParsedComparator,
+} from './internal/comparator.ts'
 import {
   parsedRangesIntersect,
   parseRange,
-  samePrereleaseTuple,
+  testComparatorSet,
   testParsedRange,
   testRangeVersion,
   tryParseRange,
@@ -482,9 +486,8 @@ function simpleRangeSubset(
   for (const version of equal.values()) {
     if (lower && !testParsedComparator(lower, version)) return null
     if (upper && !testParsedComparator(upper, version)) return null
-    return superset.every((comparator) =>
-      testParsedComparator(comparator, version),
-    )
+    // Testing each superset comparator on its own would skip the prerelease rule.
+    return testComparatorSet(superset, version, options)
   }
 
   let needsLowerPrerelease =
@@ -514,7 +517,7 @@ function simpleRangeSubset(
     if (lower) {
       if (
         needsLowerPrerelease &&
-        samePrereleaseTuple(comparator, needsLowerPrerelease)
+        comparatorAllowsPrerelease(comparator, needsLowerPrerelease)
       ) {
         needsLowerPrerelease = null
       }
@@ -531,7 +534,7 @@ function simpleRangeSubset(
     if (upper) {
       if (
         needsUpperPrerelease &&
-        samePrereleaseTuple(comparator, needsUpperPrerelease)
+        comparatorAllowsPrerelease(comparator, needsUpperPrerelease)
       ) {
         needsUpperPrerelease = null
       }

@@ -1,4 +1,5 @@
 import {
+  comparatorAllowsPrerelease,
   parseComparator,
   parsedComparatorsIntersect,
   testParsedComparator,
@@ -358,20 +359,6 @@ export function tryParseRange(
   }
 }
 
-export function samePrereleaseTuple(
-  comparator: SemVerComparator,
-  version: SemVer,
-): boolean {
-  const candidate = comparator.version
-  return (
-    candidate !== null &&
-    !!candidate.prerelease?.length &&
-    candidate.major === version.major &&
-    candidate.minor === version.minor &&
-    candidate.patch === version.patch
-  )
-}
-
 export function testComparatorSet(
   set: readonly SemVerComparator[],
   version: SemVer,
@@ -384,7 +371,9 @@ export function testComparatorSet(
     return true
   }
 
-  return set.some((comparator) => samePrereleaseTuple(comparator, version))
+  return set.some((comparator) =>
+    comparatorAllowsPrerelease(comparator, version),
+  )
 }
 
 export function testParsedRange(range: SemVerRange, version: SemVer): boolean {
@@ -401,10 +390,22 @@ export function testRangeVersion(
   return parsed ? testParsedRange(range, parsed) : false
 }
 
+function exactVersion(set: readonly SemVerComparator[]): SemVer | null {
+  for (const comparator of set) {
+    if (comparator.operator === '' && comparator.version) {
+      return comparator.version
+    }
+  }
+  return null
+}
+
 function isSatisfiable(
   comparators: readonly SemVerComparator[],
   options: RangeOptions,
 ): boolean {
+  const exact = exactVersion(comparators)
+  if (exact) return testComparatorSet(comparators, exact, options)
+
   const remaining = [...comparators]
   let current = remaining.pop()
   while (current && remaining.length) {
@@ -420,6 +421,27 @@ function isSatisfiable(
   return true
 }
 
+function setsIntersect(
+  left: readonly SemVerComparator[],
+  right: readonly SemVerComparator[],
+  options: RangeOptions,
+): boolean {
+  // A set pinning an exact version admits only that version, so comparing the
+  // comparators pairwise would skip the prerelease rule.
+  const exact = exactVersion(left) ?? exactVersion(right)
+  if (exact) {
+    return (
+      testComparatorSet(left, exact, options) &&
+      testComparatorSet(right, exact, options)
+    )
+  }
+  return left.every((leftComparator) =>
+    right.every((rightComparator) =>
+      parsedComparatorsIntersect(leftComparator, rightComparator, options),
+    ),
+  )
+}
+
 export function parsedRangesIntersect(
   left: SemVerRange,
   right: SemVerRange,
@@ -431,15 +453,7 @@ export function parsedRangesIntersect(
       right.sets.some(
         (rightSet) =>
           isSatisfiable(rightSet, options) &&
-          leftSet.every((leftComparator) =>
-            rightSet.every((rightComparator) =>
-              parsedComparatorsIntersect(
-                leftComparator,
-                rightComparator,
-                options,
-              ),
-            ),
-          ),
+          setsIntersect(leftSet, rightSet, options),
       ),
   )
 }

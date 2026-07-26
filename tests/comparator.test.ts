@@ -27,4 +27,35 @@ describe('comparators', () => {
       )
     }
   })
+
+  it('applies the prerelease rule to an exact-version comparator', () => {
+    const cases: readonly IntersectionCase[] = [
+      ['1.2.3-a', '>1.0.0', false],
+      ['1.2.3-a', '>=1.0.0', false],
+      ['1.2.3-a', '<2.0.0', false],
+      ['1.2.3-a', '<=2.0.0', false],
+      ['=1.2.3-a', '<2.0.0', false],
+      ['1.2.3-a', '>=1.2.3', false],
+      ['>1.0.0', '1.2.3-a', false],
+      ['<2.0.0', '1.2.3-a', false],
+      ['>=1.2.3', '=1.2.3-a', false],
+      // the rule is satisfied: same tuple, and the other side is a prerelease
+      ['1.2.3-a', '>=1.2.3-a', true],
+      ['1.2.3-a', '<1.2.3-b', true],
+      ['1.2.3-a', '=1.2.3-a', true],
+      ['>=1.2.3-a', '1.2.3-a', true],
+      ['1.2.3-a', '>1.0.0', true, true],
+      ['1.2.3-a', '<2.0.0', true, true],
+      // plain versions are untouched
+      ['1.2.3', '>1.0.0', true],
+      ['1.2.3', '<1.0.0', false],
+      ['>1.0.0', '1.2.3', true],
+    ]
+
+    for (const [left, right, expected, includePrerelease = false] of cases) {
+      expect(comparatorsIntersect(left, right, { includePrerelease })).toBe(
+        expected,
+      )
+    }
+  })
 })
