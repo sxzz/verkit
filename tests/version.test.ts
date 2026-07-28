@@ -10,6 +10,7 @@ import {
   getPatch,
   getPrerelease,
   increment,
+  isPrerelease,
   isValid,
   normalize,
   normalizeFull,
@@ -109,6 +110,7 @@ describe('version parsing and accessors', () => {
     version.build = ['next']
 
     expect(isValid(version)).toBe(true)
+    expect(isPrerelease(version)).toBe(true)
     expect(normalizeFull(version)).toBe('1.2.4-beta.1+next')
     expect(normalize(version)).toBe('1.2.4-beta.1')
     expect(clean(version)).toBe('1.2.4-beta.1')
@@ -133,6 +135,7 @@ describe('version parsing and accessors', () => {
     expect(increment(version, 'patch')).toBe('1.2.4')
     expect(getPrerelease(version)).toEqual([])
     expect(getBuild(version)).toEqual([])
+    expect(isPrerelease(version)).toBe(false)
   })
 
   it('accepts every valid node-semver fixture', () => {
@@ -142,6 +145,7 @@ describe('version parsing and accessors', () => {
       const full = `${comparable}${build.length ? `+${build.join('.')}` : ''}`
 
       expect(isValid(version)).toBe(true)
+      expect(isPrerelease(version)).toBe(prerelease.length > 0)
       expect(normalizeFull(version)).toBe(full)
       expect(normalize(version)).toBe(comparable)
       expect(getMajor(version)).toBe(major)
@@ -158,6 +162,7 @@ describe('version parsing and accessors', () => {
       if (typeof version !== 'string') continue
       const options = versionOptions(rawOptions)
       expect(isValid(version, options)).toBe(false)
+      expect(isPrerelease(version, options)).toBe(false)
       expect(normalizeFull(version, options)).toBeNull()
       expect(normalize(version, options)).toBeNull()
     }

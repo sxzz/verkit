@@ -29,6 +29,13 @@ export function isValid(
   return tryParse(version, options) !== null
 }
 
+export function isPrerelease(
+  version: VersionInput,
+  options: VersionOptions = {},
+): boolean {
+  return !!tryParse(version, options)?.prerelease?.length
+}
+
 export function normalizeFull(
   version: VersionInput,
   options: VersionOptions = {},

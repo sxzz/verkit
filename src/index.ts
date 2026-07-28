@@ -55,6 +55,7 @@ export {
   getPatch,
   getPrerelease,
   increment,
+  isPrerelease,
   isValid,
   normalize,
   normalizeFull,
