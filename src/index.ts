@@ -56,6 +56,7 @@ export {
   getPrerelease,
   increment,
   isPrerelease,
+  isStable,
   isValid,
   normalize,
   normalizeFull,
