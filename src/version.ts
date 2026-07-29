@@ -38,6 +38,15 @@ export function isPrerelease(
   return !!parsed.prerelease?.length
 }
 
+export function isStable(
+  version: VersionInput,
+  options: VersionOptions = {},
+): boolean | null {
+  const parsed = tryParse(version, options)
+  if (!parsed) return null
+  return !parsed.prerelease?.length
+}
+
 export function normalizeFull(
   version: VersionInput,
   options: VersionOptions = {},

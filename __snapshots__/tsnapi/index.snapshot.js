@@ -34,6 +34,7 @@ export function isNotEqual(_, _, _) {}
 export function isOutsideRange(_, _, _, _) {}
 export function isPrerelease(_, _) {}
 export function isRangeSubset(_, _, _) {}
+export function isStable(_, _) {}
 export function isValid(_, _) {}
 export function isValidRange(_, _) {}
 export function normalize(_, _) {}

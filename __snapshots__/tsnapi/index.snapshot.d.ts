@@ -89,6 +89,7 @@ export declare function isOutsideRange(_: VersionInput, _: RangeInput, _: RangeD
 export declare function isPrerelease(_: VersionInput, _?: VersionOptions): boolean | null;
 export declare function isRangeSubset(_: string, _: string, _?: RangeOptions): boolean;
 export declare function isRangeSubset(_: RangeInput, _: RangeInput): boolean;
+export declare function isStable(_: VersionInput, _?: VersionOptions): boolean | null;
 export declare function isValid(_: VersionInput, _?: VersionOptions): boolean;
 export declare function isValidRange(_: string, _?: RangeOptions): boolean;
 export declare function isValidRange(_: RangeInput): boolean;
