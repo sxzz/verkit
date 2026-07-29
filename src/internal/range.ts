@@ -358,6 +358,20 @@ export function tryParseRange(
   }
 }
 
+export function samePrereleaseTuple(
+  comparator: SemVerComparator,
+  version: SemVer,
+): boolean {
+  const candidate = comparator.version
+  return (
+    candidate !== null &&
+    !!candidate.prerelease?.length &&
+    candidate.major === version.major &&
+    candidate.minor === version.minor &&
+    candidate.patch === version.patch
+  )
+}
+
 export function testComparatorSet(
   set: readonly SemVerComparator[],
   version: SemVer,
@@ -370,16 +384,7 @@ export function testComparatorSet(
     return true
   }
 
-  return set.some((comparator) => {
-    const allowed = comparator.version
-    return (
-      allowed !== null &&
-      allowed.prerelease?.length &&
-      allowed.major === version.major &&
-      allowed.minor === version.minor &&
-      allowed.patch === version.patch
-    )
-  })
+  return set.some((comparator) => samePrereleaseTuple(comparator, version))
 }
 
 export function testParsedRange(range: SemVerRange, version: SemVer): boolean {

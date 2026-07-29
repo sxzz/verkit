@@ -3,6 +3,7 @@ import { parseComparator, testParsedComparator } from './internal/comparator.ts'
 import {
   parsedRangesIntersect,
   parseRange,
+  samePrereleaseTuple,
   testParsedRange,
   testRangeVersion,
   tryParseRange,
@@ -430,20 +431,6 @@ function lowerUpperBound(
     : comparison > 0 || (right.operator === '<' && left.operator === '<=')
       ? right
       : left
-}
-
-function samePrereleaseTuple(
-  comparator: SemVerComparator,
-  version: SemVer,
-): boolean {
-  const candidate = comparator.version
-  return (
-    candidate !== null &&
-    !!candidate.prerelease?.length &&
-    candidate.major === version.major &&
-    candidate.minor === version.minor &&
-    candidate.patch === version.patch
-  )
 }
 
 function simpleRangeSubset(
