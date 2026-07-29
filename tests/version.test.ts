@@ -162,7 +162,7 @@ describe('version parsing and accessors', () => {
       if (typeof version !== 'string') continue
       const options = versionOptions(rawOptions)
       expect(isValid(version, options)).toBe(false)
-      expect(isPrerelease(version, options)).toBe(false)
+      expect(isPrerelease(version, options)).toBeNull()
       expect(normalizeFull(version, options)).toBeNull()
       expect(normalize(version, options)).toBeNull()
     }

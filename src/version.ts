@@ -32,8 +32,10 @@ export function isValid(
 export function isPrerelease(
   version: VersionInput,
   options: VersionOptions = {},
-): boolean {
-  return !!tryParse(version, options)?.prerelease?.length
+): boolean | null {
+  const parsed = tryParse(version, options)
+  if (!parsed) return null
+  return !!parsed.prerelease?.length
 }
 
 export function normalizeFull(
