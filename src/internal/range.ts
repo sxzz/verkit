@@ -420,6 +420,13 @@ function isSatisfiable(
   return true
 }
 
+function exactVersionFromSet(
+  set: readonly SemVerComparator[],
+): SemVer | null {
+  const comparator = set.length === 1 ? set[0] : undefined
+  return comparator?.operator === '' ? comparator.version : null
+}
+
 export function parsedRangesIntersect(
   left: SemVerRange,
   right: SemVerRange,
@@ -427,22 +434,12 @@ export function parsedRangesIntersect(
 ): boolean {
   return left.sets.some((leftSet) => {
     if (!isSatisfiable(leftSet, options)) return false
-
     return right.sets.some((rightSet) => {
       if (!isSatisfiable(rightSet, options)) return false
-
-      const leftExact =
-        leftSet.length === 1 &&
-        leftSet[0]!.operator === '' &&
-        leftSet[0]!.version
+      const leftExact = exactVersionFromSet(leftSet)
       if (leftExact) return testComparatorSet(rightSet, leftExact, options)
-
-      const rightExact =
-        rightSet.length === 1 &&
-        rightSet[0]!.operator === '' &&
-        rightSet[0]!.version
+      const rightExact = exactVersionFromSet(rightSet)
       if (rightExact) return testComparatorSet(leftSet, rightExact, options)
-
       return leftSet.every((leftComparator) =>
         rightSet.every((rightComparator) =>
           parsedComparatorsIntersect(leftComparator, rightComparator, options),
