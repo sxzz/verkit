@@ -272,6 +272,17 @@ describe('range sets', () => {
     expect(simplifyRange(versions, '2.1 || 2.2 || 2.3')).toBe('2.1.0 - 2.3.1')
     expect(versions).toEqual(original)
   })
+
+  it('handles prerelease checks in subset and intersection operations', () => {
+    expect(satisfies('1.2.3-a', '>1.0.0')).toBe(false)
+    expect(isRangeSubset('1.2.3-a', '>1.0.0')).toBe(false)
+    expect(rangesIntersect('1.2.3-a', '>1.0.0')).toBe(false)
+    expect(rangesIntersect('>1.0.0', '1.2.3-a')).toBe(false)
+
+    expect(satisfies('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
+    expect(isRangeSubset('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
+    expect(rangesIntersect('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
+  })
 })
 
 describe('outside ranges', () => {
