@@ -445,11 +445,7 @@ export function parsedRangesIntersect(
 
       return leftSet.every((leftComparator) =>
         rightSet.every((rightComparator) =>
-          parsedComparatorsIntersect(
-            leftComparator,
-            rightComparator,
-            options,
-          ),
+          parsedComparatorsIntersect(leftComparator, rightComparator, options),
         ),
       )
     })

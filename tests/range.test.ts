@@ -274,12 +274,7 @@ describe('range sets', () => {
   })
 
   it('handles prerelease checks in subset and intersection operations', () => {
-    const cases: readonly (readonly [
-      string,
-      string,
-      boolean,
-      boolean?,
-    ])[] = [
+    const cases: readonly (readonly [string, string, boolean, boolean?])[] = [
       ['1.2.3-a', '>1.0.0', false],
       ['1.2.3-a', '>=1.0.0', false],
       ['1.2.3-a', '>=1.0.0 <2.0.0', false],
