@@ -74,14 +74,42 @@ export function testComparatorVersion(
   return parsed ? testParsedComparator(comparator, parsed) : false
 }
 
+export function samePrereleaseTuple(
+  comparator: SemVerComparator,
+  version: SemVer,
+): boolean {
+  const candidate = comparator.version
+  return (
+    candidate !== null &&
+    !!candidate.prerelease?.length &&
+    candidate.major === version.major &&
+    candidate.minor === version.minor &&
+    candidate.patch === version.patch
+  )
+}
+
 export function parsedComparatorsIntersect(
   left: SemVerComparator,
   right: SemVerComparator,
   options: RangeOptions = {},
 ): boolean {
   if (!left.version || !right.version) return true
-  if (left.operator === '') return testParsedComparator(right, left.version)
-  if (right.operator === '') return testParsedComparator(left, right.version)
+  if (left.operator === '') {
+    return (
+      testParsedComparator(right, left.version) &&
+      (!left.version.prerelease?.length ||
+        options.includePrerelease ||
+        samePrereleaseTuple(right, left.version))
+    )
+  }
+  if (right.operator === '') {
+    return (
+      testParsedComparator(left, right.version) &&
+      (!right.version.prerelease?.length ||
+        options.includePrerelease ||
+        samePrereleaseTuple(left, right.version))
+    )
+  }
 
   if (
     options.includePrerelease &&
