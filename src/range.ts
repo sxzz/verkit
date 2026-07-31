@@ -7,6 +7,7 @@ import {
 import {
   parsedRangesIntersect,
   parseRange,
+  testComparatorSet,
   testParsedRange,
   testRangeVersion,
   tryParseRange,
@@ -485,17 +486,7 @@ function simpleRangeSubset(
   for (const version of equal.values()) {
     if (lower && !testParsedComparator(lower, version)) return null
     if (upper && !testParsedComparator(upper, version)) return null
-    if (
-      superset.some((comparator) => !testParsedComparator(comparator, version))
-    ) {
-      return false
-    }
-    if (!version.prerelease?.length || options.includePrerelease) {
-      return true
-    }
-    return superset.some((comparator) =>
-      samePrereleaseTuple(comparator, version),
-    )
+    return testComparatorSet(superset, version, options)
   }
 
   let needsLowerPrerelease =
