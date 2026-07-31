@@ -420,9 +420,7 @@ function isSatisfiable(
   return true
 }
 
-function exactVersionFromSet(
-  set: readonly SemVerComparator[],
-): SemVer | null {
+function exactVersionFromSet(set: readonly SemVerComparator[]): SemVer | null {
   const comparator = set.length === 1 ? set[0] : undefined
   return comparator?.operator === '' ? comparator.version : null
 }
