@@ -412,21 +412,33 @@ export function parsedRangesIntersect(
   right: SemVerRange,
   options: RangeOptions = {},
 ): boolean {
-  return left.sets.some(
-    (leftSet) =>
-      isSatisfiable(leftSet, options) &&
-      right.sets.some(
-        (rightSet) =>
-          isSatisfiable(rightSet, options) &&
-          leftSet.every((leftComparator) =>
-            rightSet.every((rightComparator) =>
-              parsedComparatorsIntersect(
-                leftComparator,
-                rightComparator,
-                options,
-              ),
-            ),
+  return left.sets.some((leftSet) => {
+    if (!isSatisfiable(leftSet, options)) return false
+
+    return right.sets.some((rightSet) => {
+      if (!isSatisfiable(rightSet, options)) return false
+
+      const leftExact =
+        leftSet.length === 1 &&
+        leftSet[0]!.operator === '' &&
+        leftSet[0]!.version
+      if (leftExact) return testComparatorSet(rightSet, leftExact, options)
+
+      const rightExact =
+        rightSet.length === 1 &&
+        rightSet[0]!.operator === '' &&
+        rightSet[0]!.version
+      if (rightExact) return testComparatorSet(leftSet, rightExact, options)
+
+      return leftSet.every((leftComparator) =>
+        rightSet.every((rightComparator) =>
+          parsedComparatorsIntersect(
+            leftComparator,
+            rightComparator,
+            options,
           ),
-      ),
-  )
+        ),
+      )
+    })
+  })
 }

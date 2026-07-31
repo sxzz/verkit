@@ -94,22 +94,8 @@ export function parsedComparatorsIntersect(
   options: RangeOptions = {},
 ): boolean {
   if (!left.version || !right.version) return true
-  if (left.operator === '') {
-    return (
-      testParsedComparator(right, left.version) &&
-      (!left.version.prerelease?.length ||
-        options.includePrerelease ||
-        samePrereleaseTuple(right, left.version))
-    )
-  }
-  if (right.operator === '') {
-    return (
-      testParsedComparator(left, right.version) &&
-      (!right.version.prerelease?.length ||
-        options.includePrerelease ||
-        samePrereleaseTuple(left, right.version))
-    )
-  }
+  if (left.operator === '') return testParsedComparator(right, left.version)
+  if (right.operator === '') return testParsedComparator(left, right.version)
 
   if (
     options.includePrerelease &&
