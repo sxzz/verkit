@@ -74,20 +74,6 @@ export function testComparatorVersion(
   return parsed ? testParsedComparator(comparator, parsed) : false
 }
 
-export function samePrereleaseTuple(
-  comparator: SemVerComparator,
-  version: SemVer,
-): boolean {
-  const candidate = comparator.version
-  return (
-    candidate !== null &&
-    !!candidate.prerelease?.length &&
-    candidate.major === version.major &&
-    candidate.minor === version.minor &&
-    candidate.patch === version.patch
-  )
-}
-
 export function parsedComparatorsIntersect(
   left: SemVerComparator,
   right: SemVerComparator,

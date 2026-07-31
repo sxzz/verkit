@@ -1,12 +1,9 @@
 import { sort } from './comparison.ts'
-import {
-  parseComparator,
-  samePrereleaseTuple,
-  testParsedComparator,
-} from './internal/comparator.ts'
+import { parseComparator, testParsedComparator } from './internal/comparator.ts'
 import {
   parsedRangesIntersect,
   parseRange,
+  samePrereleaseTuple,
   testComparatorSet,
   testParsedRange,
   testRangeVersion,

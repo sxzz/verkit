@@ -1,7 +1,6 @@
 import {
   parseComparator,
   parsedComparatorsIntersect,
-  samePrereleaseTuple,
   testParsedComparator,
 } from './comparator.ts'
 import {
@@ -357,6 +356,20 @@ export function tryParseRange(
   } catch {
     return null
   }
+}
+
+export function samePrereleaseTuple(
+  comparator: SemVerComparator,
+  version: SemVer,
+): boolean {
+  const candidate = comparator.version
+  return (
+    candidate !== null &&
+    !!candidate.prerelease?.length &&
+    candidate.major === version.major &&
+    candidate.minor === version.minor &&
+    candidate.patch === version.patch
+  )
 }
 
 export function testComparatorSet(
