@@ -279,9 +279,15 @@ describe('range sets', () => {
     expect(rangesIntersect('1.2.3-a', '>1.0.0')).toBe(false)
     expect(rangesIntersect('>1.0.0', '1.2.3-a')).toBe(false)
 
-    expect(satisfies('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
-    expect(isRangeSubset('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
-    expect(rangesIntersect('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(true)
+    expect(satisfies('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(
+      true,
+    )
+    expect(
+      isRangeSubset('1.2.3-a', '>1.0.0', { includePrerelease: true }),
+    ).toBe(true)
+    expect(
+      rangesIntersect('1.2.3-a', '>1.0.0', { includePrerelease: true }),
+    ).toBe(true)
   })
 })
 

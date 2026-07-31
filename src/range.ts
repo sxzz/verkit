@@ -1,5 +1,9 @@
 import { sort } from './comparison.ts'
-import { parseComparator, samePrereleaseTuple, testParsedComparator } from './internal/comparator.ts'
+import {
+  parseComparator,
+  samePrereleaseTuple,
+  testParsedComparator,
+} from './internal/comparator.ts'
 import {
   parsedRangesIntersect,
   parseRange,
@@ -482,7 +486,7 @@ function simpleRangeSubset(
     if (lower && !testParsedComparator(lower, version)) return null
     if (upper && !testParsedComparator(upper, version)) return null
     if (
-      !superset.every((comparator) => testParsedComparator(comparator, version))
+      superset.some((comparator) => !testParsedComparator(comparator, version))
     ) {
       return false
     }
