@@ -274,20 +274,29 @@ describe('range sets', () => {
   })
 
   it('handles prerelease checks in subset and intersection operations', () => {
-    expect(satisfies('1.2.3-a', '>1.0.0')).toBe(false)
-    expect(isRangeSubset('1.2.3-a', '>1.0.0')).toBe(false)
-    expect(rangesIntersect('1.2.3-a', '>1.0.0')).toBe(false)
-    expect(rangesIntersect('>1.0.0', '1.2.3-a')).toBe(false)
+    const cases: readonly (readonly [
+      string,
+      string,
+      boolean,
+      boolean?,
+    ])[] = [
+      ['1.2.3-a', '>1.0.0', false],
+      ['1.2.3-a', '>=1.0.0', false],
+      ['1.2.3-a', '>=1.0.0 <2.0.0', false],
+      ['1.2.3-a', '>=1.2.3-0 <1.2.4', true],
+      ['1.2.3-a', '>1.2.3-0 <1.2.4', true],
+      ['1.2.3-a', '>=1.2.3-a <1.2.4', true],
+      ['1.2.3-a', '>1.0.0', true, true],
+      ['1.2.3-a', '>=1.0.0 <2.0.0', true, true],
+    ]
 
-    expect(satisfies('1.2.3-a', '>1.0.0', { includePrerelease: true })).toBe(
-      true,
-    )
-    expect(
-      isRangeSubset('1.2.3-a', '>1.0.0', { includePrerelease: true }),
-    ).toBe(true)
-    expect(
-      rangesIntersect('1.2.3-a', '>1.0.0', { includePrerelease: true }),
-    ).toBe(true)
+    for (const [versionOrSubset, range, expected, includePrerelease] of cases) {
+      const options = includePrerelease ? { includePrerelease: true } : {}
+      expect(satisfies(versionOrSubset, range, options)).toBe(expected)
+      expect(isRangeSubset(versionOrSubset, range, options)).toBe(expected)
+      expect(rangesIntersect(versionOrSubset, range, options)).toBe(expected)
+      expect(rangesIntersect(range, versionOrSubset, options)).toBe(expected)
+    }
   })
 })
 
