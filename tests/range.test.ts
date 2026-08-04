@@ -274,6 +274,122 @@ describe('range sets', () => {
   })
 })
 
+describe('exact-version range algebra', () => {
+  it('applies the prerelease rule on the exact-version path', () => {
+    // subset, superset, isRangeSubset, rangesIntersect (defaults to the former)
+    type Case = readonly [string, string, boolean, boolean?]
+    const cases: readonly Case[] = [
+      ['1.2.3-a', '*', false],
+      ['1.2.3-a', 'x', false],
+      ['1.2.3-a', '>=0.0.0', false],
+      ['1.2.3-a', '>=0.0.0-0', false],
+      ['1.2.3-a', '>1.0.0', false],
+      ['1.2.3-a', '>=1.0.0', false],
+      ['1.2.3-a', '<2.0.0', false],
+      ['1.2.3-a', '<=2.0.0', false],
+      ['1.2.3-a', '1.x', false],
+      ['1.2.3-a', '1.2.x', false],
+      ['1.2.3-a', '^1.0.0', false],
+      ['1.2.3-a', '~1.2.0', false],
+      ['1.2.3-a', '1.0.0 - 2.0.0', false],
+      ['1.2.3-a', '>=1.0.0 <2.0.0', false],
+      ['=1.2.3-a', '<2.0.0', false],
+      ['1.2.3-a 1.2.3-a', '>1.0.0', false],
+      // an exact comparator can coexist with other comparators in the set
+      ['1.2.3-a <=2.0.0', '*', false],
+      ['=2.0.0-rc.1', '1.0.0 - 3.0.0', false],
+      // only the prerelease branch of the union is excluded
+      ['1.2.3-a || 2.0.0', '>1.0.0', false, true],
+      ['2.0.0 || 1.2.3-a', '>1.0.0', false, true],
+      // the superset names a prerelease at the same tuple, so it is admitted
+      ['1.2.3-a', '^1.2.3-a', true],
+      ['1.2.3-a', '~1.2.3-a', true],
+      ['1.2.3-a', '>=1.2.3-a <1.2.4', true],
+      ['1.2.3-a', '1.2.3-a - 1.2.3-b', true],
+      ['1.2.3-a', '1.2.3-a', true],
+      ['1.2.3-a', '1.2.3-a || 2.0.0', true],
+      ['1.2.3', '>1.0.0', true],
+      ['1.2.3', '1.x', true],
+    ]
+
+    for (const [subset, superset, expected, intersects = expected] of cases) {
+      expect(isRangeSubset(subset, superset)).toBe(expected)
+      expect(rangesIntersect(subset, superset)).toBe(intersects)
+      expect(rangesIntersect(superset, subset)).toBe(intersects)
+      expect(isRangeSubset(subset, superset, { includePrerelease: true })).toBe(
+        true,
+      )
+    }
+  })
+
+  it('keeps subset and intersection in step with satisfies', () => {
+    // A bare exact version is a range with a single member, so both answers are
+    // decided by satisfies() and need no reference implementation.
+    const versions = [
+      '1.2.3',
+      '1.2.3-a',
+      '1.2.3-a.0',
+      '1.2.3-0',
+      '1.2.3+build',
+      '1.2.3-a+build',
+      '2.0.0',
+      '2.0.0-rc.1',
+      '0.0.0-0',
+      '1.0.0-alpha.beta',
+    ]
+    const ranges = [
+      '',
+      '*',
+      'x',
+      '>=0.0.0',
+      '>=0.0.0-0',
+      '<0.0.0-0',
+      '>1.0.0',
+      '>=1.0.0',
+      '<2.0.0',
+      '<=2.0.0',
+      '<1.2.4',
+      '>1.2.3-a',
+      '>=1.2.3-a',
+      '<=1.2.3-a',
+      '^1.0.0',
+      '^1.2.3',
+      '^1.2.3-a',
+      '~1.2.0',
+      '~1.2.3-a',
+      '1.x',
+      '1.2.x',
+      '1.0.0 - 2.0.0',
+      '1.2.3-a - 1.2.3-b',
+      '>=1.0.0 <2.0.0',
+      '>=1.2.3-a <1.2.4',
+      '1.2.3',
+      '1.2.3-a',
+      '=1.2.3-a',
+      '2.0.0',
+      '1.2.3-a || 2.0.0',
+      '<1.0.0 || >2.0.0',
+      '^1.0.0 || ^2.0.0',
+    ]
+    const optionSets: readonly RangeOptions[] = [
+      {},
+      { includePrerelease: true },
+      { loose: true },
+    ]
+
+    for (const options of optionSets) {
+      for (const version of versions) {
+        for (const range of ranges) {
+          const expected = satisfies(version, range, options)
+          expect(isRangeSubset(version, range, options)).toBe(expected)
+          expect(rangesIntersect(version, range, options)).toBe(expected)
+          expect(rangesIntersect(range, version, options)).toBe(expected)
+        }
+      }
+    }
+  })
+})
+
 describe('outside ranges', () => {
   it('matches every greater-than fixture', () => {
     for (const row of versionGtRange as readonly RangeCase[]) {
