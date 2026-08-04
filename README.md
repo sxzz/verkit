@@ -15,8 +15,8 @@ tree-shakeable APIs.
 - 💙 First-class TypeScript declarations.
 - 🌳 Functional, tree-shakeable named exports.
 - 🔁 Mutable `SemVer` and `SemVerRange` records.
-- ⚡ 26.0% smaller for full CDN imports.
-- 🪶 60.1% smaller with common bundled imports.
+- ⚡ 24.8% smaller for full CDN imports.
+- 🪶 59.9% smaller with common bundled imports.
 - 🛡️ Immutable collection operations.
 
 ## Install
@@ -153,18 +153,18 @@ Full package imports, minified with Rolldown:
 
 | Package               | Minified |    gzip |  Brotli |
 | --------------------- | -------: | ------: | ------: |
-| verkit                | 18,232 B | 5,730 B | 5,215 B |
-| [semver][node-semver] | 24,648 B | 7,361 B | 6,708 B |
-| verkit reduction      |    26.0% |   22.2% |   22.3% |
+| verkit                | 18,512 B | 5,812 B | 5,297 B |
+| [semver][node-semver] | 24,603 B | 7,356 B | 6,703 B |
+| verkit reduction      |    24.8% |   21.0% |   21.0% |
 
 Common validation, range, comparison, increment, and coercion imports,
 tree-shaken and minified with Rolldown:
 
 | Package               | Minified |    gzip |  Brotli |
 | --------------------- | -------: | ------: | ------: |
-| verkit                |  9,898 B | 3,384 B | 3,084 B |
-| [semver][node-semver] | 24,801 B | 7,432 B | 6,773 B |
-| verkit reduction      |    60.1% |   54.5% |   54.5% |
+| verkit                |  9,933 B | 3,387 B | 3,092 B |
+| [semver][node-semver] | 24,756 B | 7,428 B | 6,765 B |
+| verkit reduction      |    59.9% |   54.4% |   54.3% |
 
 Run `pnpm test:size` to reproduce the comparison.
 
