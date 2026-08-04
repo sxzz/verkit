@@ -88,14 +88,19 @@ export function comparatorAllowsPrerelease(
   )
 }
 
-function testComparatorAsSet(
-  comparator: SemVerComparator,
+export function testComparatorSet(
+  set: readonly SemVerComparator[],
   version: SemVer,
   options: RangeOptions,
 ): boolean {
-  if (!testParsedComparator(comparator, version)) return false
-  if (!version.prerelease?.length || options.includePrerelease) return true
-  return comparatorAllowsPrerelease(comparator, version)
+  if (set.some((comparator) => !testParsedComparator(comparator, version))) {
+    return false
+  }
+  return (
+    !version.prerelease?.length ||
+    !!options.includePrerelease ||
+    set.some((comparator) => comparatorAllowsPrerelease(comparator, version))
+  )
 }
 
 export function parsedComparatorsIntersect(
@@ -107,10 +112,10 @@ export function parsedComparatorsIntersect(
   // An exact-version comparator admits one version, so the other side must be
   // tested as a set to apply the prerelease rule.
   if (left.operator === '') {
-    return testComparatorAsSet(right, left.version, options)
+    return testComparatorSet([right], left.version, options)
   }
   if (right.operator === '') {
-    return testComparatorAsSet(left, right.version, options)
+    return testComparatorSet([left], right.version, options)
   }
 
   if (

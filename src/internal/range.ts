@@ -1,8 +1,7 @@
 import {
-  comparatorAllowsPrerelease,
   parseComparator,
   parsedComparatorsIntersect,
-  testParsedComparator,
+  testComparatorSet,
 } from './comparator.ts'
 import {
   BUILD,
@@ -359,23 +358,6 @@ export function tryParseRange(
   }
 }
 
-export function testComparatorSet(
-  set: readonly SemVerComparator[],
-  version: SemVer,
-  options: RangeOptions,
-): boolean {
-  if (set.some((comparator) => !testParsedComparator(comparator, version))) {
-    return false
-  }
-  if (!version.prerelease?.length || options.includePrerelease) {
-    return true
-  }
-
-  return set.some((comparator) =>
-    comparatorAllowsPrerelease(comparator, version),
-  )
-}
-
 export function testParsedRange(range: SemVerRange, version: SemVer): boolean {
   return range.sets.some((set) =>
     testComparatorSet(set, version, range.options),
@@ -426,15 +408,12 @@ function setsIntersect(
   right: readonly SemVerComparator[],
   options: RangeOptions,
 ): boolean {
-  // A set pinning an exact version admits only that version, so comparing the
-  // comparators pairwise would skip the prerelease rule.
-  const exact = exactVersion(left) ?? exactVersion(right)
-  if (exact) {
-    return (
-      testComparatorSet(left, exact, options) &&
-      testComparatorSet(right, exact, options)
-    )
-  }
+  // The caller has already checked that both sets are satisfiable.
+  const leftExact = exactVersion(left)
+  if (leftExact) return testComparatorSet(right, leftExact, options)
+  const rightExact = exactVersion(right)
+  if (rightExact) return testComparatorSet(left, rightExact, options)
+
   return left.every((leftComparator) =>
     right.every((rightComparator) =>
       parsedComparatorsIntersect(leftComparator, rightComparator, options),

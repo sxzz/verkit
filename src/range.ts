@@ -2,12 +2,12 @@ import { sort } from './comparison.ts'
 import {
   comparatorAllowsPrerelease,
   parseComparator,
+  testComparatorSet,
   testParsedComparator,
 } from './internal/comparator.ts'
 import {
   parsedRangesIntersect,
   parseRange,
-  testComparatorSet,
   testParsedRange,
   testRangeVersion,
   tryParseRange,

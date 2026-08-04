@@ -295,6 +295,8 @@ describe('exact-version range algebra', () => {
       ['1.2.3-a', '>=1.0.0 <2.0.0', false],
       ['=1.2.3-a', '<2.0.0', false],
       ['1.2.3-a 1.2.3-a', '>1.0.0', false],
+      // an exact comparator can coexist with other comparators in the set
+      ['1.2.3-a <=2.0.0', '*', false],
       ['=2.0.0-rc.1', '1.0.0 - 3.0.0', false],
       // only the prerelease branch of the union is excluded
       ['1.2.3-a || 2.0.0', '>1.0.0', false, true],
