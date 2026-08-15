@@ -176,6 +176,12 @@ function nextVersionAfter(version: SemVer): SemVer {
   return parse(comparable)
 }
 
+const ZERO_VERSION: SemVer = { major: 0, minor: 0, patch: 0 }
+const ZERO_PRERELEASE_VERSION: SemVer = {
+  ...ZERO_VERSION,
+  prerelease: [0],
+}
+
 export function findMinimumForRange(
   range: string,
   options?: RangeOptions,
@@ -186,12 +192,8 @@ export function findMinimumForRange(
   options: RangeOptions = {},
 ): string | null {
   const parsedRange = (parseRange as ParseRangeInput)(range, options)
-  const zero = parse('0.0.0')
-  if (testParsedRange(parsedRange, zero)) return formatComparableVersion(zero)
-  const zeroPrerelease = parse('0.0.0-0')
-  if (testParsedRange(parsedRange, zeroPrerelease)) {
-    return formatComparableVersion(zeroPrerelease)
-  }
+  if (testParsedRange(parsedRange, ZERO_VERSION)) return '0.0.0'
+  if (testParsedRange(parsedRange, ZERO_PRERELEASE_VERSION)) return '0.0.0-0'
 
   let minimum: SemVer | null = null
   for (const set of parsedRange.sets) {
