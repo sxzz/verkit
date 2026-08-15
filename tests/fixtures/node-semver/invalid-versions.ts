@@ -2,7 +2,7 @@
 
 // none of these are semvers
 // [value, reason, opt]
-import { MAX_LENGTH } from '../../../src/constants.ts'
+import { MAX_LENGTH } from '../../../src/version/constants.ts'
 
 const MAX_SAFE_INTEGER = Number.MAX_SAFE_INTEGER
 const fixtures: readonly (readonly unknown[])[] = [

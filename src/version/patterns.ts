@@ -2,7 +2,7 @@ import {
   MAX_LENGTH,
   MAX_SAFE_BUILD_LENGTH,
   MAX_SAFE_COMPONENT_LENGTH,
-} from '../constants.ts'
+} from './constants.ts'
 
 export const LETTER_DASH_NUMBER: string = '[a-zA-Z0-9-]'
 export const NUMERIC_IDENTIFIER: string = String.raw`0|[1-9]\d*`

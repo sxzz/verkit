@@ -15,8 +15,8 @@ tree-shakeable APIs.
 - 💙 First-class TypeScript declarations.
 - 🌳 Functional, tree-shakeable named exports.
 - 🔁 Mutable `SemVer` and `SemVerRange` records.
-- ⚡ 24.8% smaller for full CDN imports.
-- 🪶 59.9% smaller with common bundled imports.
+- ⚡ 23.8% smaller for full CDN imports.
+- 🪶 60.3% smaller with common bundled imports.
 - 🛡️ Immutable collection operations.
 
 ## Install
@@ -38,16 +38,18 @@ import {
 } from 'verkit'
 
 const version = parse('1.2.3-rc.1+sha.abc')
+const coerced = coerce('release 42.6.7.9', { rtl: true })
 version.patch = 4
 
 normalizeFull(version) // '1.2.4-rc.1+sha.abc'
 normalize(version) // '1.2.4-rc.1'
 increment(version, 'minor') // '1.3.0'
 truncate(version, 'patch') // '1.2.4'
-coerce('release 42.6.7.9', { rtl: true }) // '6.7.9'
+coerced?.major // 6
 ```
 
-Version APIs accept strings or mutable `SemVer` objects returned by `parse`.
+Version APIs accept strings or mutable `SemVer` objects returned by `parse` or
+`coerce`.
 `normalizeFull` keeps build metadata; normalized, incremented, and truncated
 versions omit it.
 
@@ -102,33 +104,34 @@ See the [API reference](https://npmx.dev/package-docs/verkit).
 
 ## Invalid input behavior
 
-`parse` and `parseRange` throw detailed `TypeError`s. Their safe wrappers,
-`tryParse` and `tryParseRange`, return `null`; other safe transforms and
-predicates keep their documented `null`/`false` behavior.
+`parse`, `parseComparator`, and `parseRange` throw detailed `TypeError`s. Their
+`tryParse*` wrappers return `null`; other safe transforms and predicates keep
+their documented `null`/`false` behavior.
 
 ## Migrating from node-semver
 
 Only renamed or reshaped [node-semver] APIs are listed; same-named functions
 such as `clean`, `coerce`, `compare`, and `satisfies` are omitted.
 
-| node-semver                                    | verkit                                                                                   |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `SemVer`                                       | `parse`                                                                                  |
-| `parse`                                        | `tryParse`                                                                               |
-| `valid`                                        | `normalize`                                                                              |
-| `inc`, `diff`                                  | `increment`, `difference`                                                                |
-| `major`, `minor`, `patch`, `prerelease`        | `getMajor`, `getMinor`, `getPatch`, `getPrerelease`                                      |
-| `rcompare`, `compareLoose`, `cmp`              | `compareReversed`, `compare` with `{ loose: true }`, `compareWithOperator`               |
-| `eq`, `neq`, `gt`, `gte`, `lt`, `lte`          | `isEqual`, `isNotEqual`, `isGreater`, `isGreaterOrEqual`, `isLess`, `isLessOrEqual`      |
-| `rsort`                                        | `sortReversed`                                                                           |
-| `rcompareIdentifiers`                          | `compareIdentifiersReversed`                                                             |
-| `Comparator`                                   | `SemVerComparator`, `normalizeComparator`, `satisfiesComparator`, `comparatorsIntersect` |
-| `Range`                                        | `parseRange`                                                                             |
-| `toComparators`, `validRange`                  | `rangeToComparators`, `normalizeRange`                                                   |
-| `maxSatisfying`, `minSatisfying`, `minVersion` | `findMaxSatisfying`, `findMinSatisfying`, `findMinimumForRange`                          |
-| `outside`, `gtr`, `ltr`                        | `isOutsideRange`, `isGreaterThanRange`, `isLessThanRange`                                |
-| `intersects`, `subset`                         | `rangesIntersect`, `isRangeSubset`                                                       |
-| `RELEASE_TYPES`                                | `INCREMENT_TYPES` (also includes `release`)                                              |
+| node-semver                                    | verkit                                                                              |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `SemVer`                                       | `parse`                                                                             |
+| `parse`                                        | `tryParse`                                                                          |
+| `valid`                                        | `normalize`                                                                         |
+| `inc`, `diff`                                  | `increment`, `difference`                                                           |
+| `major`, `minor`, `patch`, `prerelease`        | `getMajor`, `getMinor`, `getPatch`, `getPrerelease`                                 |
+| `rcompare`, `compareLoose`, `cmp`              | `compareReversed`, `compare` with `{ loose: true }`, `compareWithOperator`          |
+| `eq`, `neq`, `gt`, `gte`, `lt`, `lte`          | `isEqual`, `isNotEqual`, `isGreater`, `isGreaterOrEqual`, `isLess`, `isLessOrEqual` |
+| `rsort`                                        | `sortReversed`                                                                      |
+| `rcompareIdentifiers`                          | `compareIdentifiersReversed`                                                        |
+| `Comparator`                                   | `SemVerComparator`, `parseComparator`, `tryParseComparator`                         |
+| Comparator formatting, test, and intersection  | `normalizeComparator`, `satisfiesComparator`, `comparatorsIntersect`                |
+| `Range`                                        | `parseRange`                                                                        |
+| `toComparators`, `validRange`                  | `rangeToComparators`, `normalizeRange`                                              |
+| `maxSatisfying`, `minSatisfying`, `minVersion` | `findMaxSatisfying`, `findMinSatisfying`, `findMinimumForRange`                     |
+| `outside`, `gtr`, `ltr`                        | `isOutsideRange`, `isGreaterThanRange`, `isLessThanRange`                           |
+| `intersects`, `subset`                         | `rangesIntersect`, `isRangeSubset`                                                  |
+| `RELEASE_TYPES`                                | `INCREMENT_TYPES` (also includes `release`)                                         |
 
 `valid` returns a normalized `string | null` in node-semver, so its equivalent
 is `normalize`. Use `isValid` when you only need a boolean.
@@ -153,18 +156,18 @@ Full package imports, minified with Rolldown:
 
 | Package               | Minified |    gzip |  Brotli |
 | --------------------- | -------: | ------: | ------: |
-| verkit                | 18,512 B | 5,812 B | 5,297 B |
+| verkit                | 18,754 B | 5,874 B | 5,341 B |
 | [semver][node-semver] | 24,603 B | 7,356 B | 6,703 B |
-| verkit reduction      |    24.8% |   21.0% |   21.0% |
+| verkit reduction      |    23.8% |   20.1% |   20.3% |
 
 Common validation, range, comparison, increment, and coercion imports,
 tree-shaken and minified with Rolldown:
 
 | Package               | Minified |    gzip |  Brotli |
 | --------------------- | -------: | ------: | ------: |
-| verkit                |  9,933 B | 3,387 B | 3,092 B |
-| [semver][node-semver] | 24,756 B | 7,428 B | 6,765 B |
-| verkit reduction      |    59.9% |   54.4% |   54.3% |
+| verkit                |  9,834 B | 3,361 B | 3,086 B |
+| [semver][node-semver] | 24,754 B | 7,427 B | 6,764 B |
+| verkit reduction      |    60.3% |   54.7% |   54.4% |
 
 Run `pnpm test:size` to reproduce the comparison.
 
@@ -175,13 +178,13 @@ better.
 
 | Operation                 | verkit ops/s | semver ops/s | Faster       |
 | ------------------------- | -----------: | -----------: | ------------ |
-| Parse and normalize       |        1.92M |        1.63M | verkit 1.18× |
-| Compare                   |        1.60M |        1.13M | verkit 1.41× |
-| Compare parsed versions   |       12.83M |        5.93M | verkit 2.16× |
-| Increment                 |        1.78M |        1.02M | verkit 1.76× |
-| Coerce                    |        1.18M |        1.05M | verkit 1.13× |
-| Satisfy uncached ranges   |        0.07M |        0.06M | verkit 1.18× |
-| Satisfy pre-parsed inputs |        5.15M |        2.28M | verkit 2.26× |
+| Parse and normalize       |        1.89M |        1.59M | verkit 1.19× |
+| Compare                   |        1.58M |        1.03M | verkit 1.53× |
+| Compare parsed versions   |       11.70M |        5.44M | verkit 2.15× |
+| Increment                 |        1.79M |        1.00M | verkit 1.79× |
+| Coerce                    |        1.40M |        1.06M | verkit 1.32× |
+| Satisfy uncached ranges   |        81.7K |        56.3K | verkit 1.45× |
+| Satisfy pre-parsed inputs |        5.34M |        2.05M | verkit 2.60× |
 
 Range benchmarks either cycle through 1,001 inputs to avoid cache hits or
 parse once and reuse the resulting objects.

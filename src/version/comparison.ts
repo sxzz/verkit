@@ -1,16 +1,70 @@
-import {
-  compareBuildParsed,
-  compareMainParsed,
-  compareParsed,
-  comparePrereleaseParsed,
-  parse,
-} from './internal/version.ts'
+import { compareIdentifiers } from './identifiers.ts'
+import { parse } from './parse.ts'
 import type {
   Comparison,
   ComparisonOperator,
+  SemVer,
   VersionInput,
   VersionOptions,
 } from './types.ts'
+
+export function compareMainParsed(left: SemVer, right: SemVer): Comparison {
+  return left.major === right.major
+    ? left.minor === right.minor
+      ? left.patch === right.patch
+        ? 0
+        : left.patch < right.patch
+          ? -1
+          : 1
+      : left.minor < right.minor
+        ? -1
+        : 1
+    : left.major < right.major
+      ? -1
+      : 1
+}
+
+export function comparePrereleaseParsed(
+  left: SemVer,
+  right: SemVer,
+): Comparison {
+  const leftPrerelease = left.prerelease
+  const rightPrerelease = right.prerelease
+  if (leftPrerelease?.length && !rightPrerelease?.length) return -1
+  if (!leftPrerelease?.length && rightPrerelease?.length) return 1
+  if (!leftPrerelease?.length && !rightPrerelease?.length) return 0
+
+  for (let index = 0; ; index++) {
+    const leftIdentifier = leftPrerelease?.[index]
+    const rightIdentifier = rightPrerelease?.[index]
+    if (leftIdentifier === undefined && rightIdentifier === undefined) return 0
+    if (rightIdentifier === undefined) return 1
+    if (leftIdentifier === undefined) return -1
+    if (leftIdentifier !== rightIdentifier) {
+      return compareIdentifiers(leftIdentifier, rightIdentifier)
+    }
+  }
+}
+
+export function compareParsed(left: SemVer, right: SemVer): Comparison {
+  return compareMainParsed(left, right) || comparePrereleaseParsed(left, right)
+}
+
+export function compareBuildParsed(left: SemVer, right: SemVer): Comparison {
+  const precedence = compareParsed(left, right)
+  if (precedence !== 0) return precedence
+
+  for (let index = 0; ; index++) {
+    const leftIdentifier = left.build?.[index]
+    const rightIdentifier = right.build?.[index]
+    if (leftIdentifier === undefined && rightIdentifier === undefined) return 0
+    if (rightIdentifier === undefined) return 1
+    if (leftIdentifier === undefined) return -1
+    if (leftIdentifier !== rightIdentifier) {
+      return compareIdentifiers(leftIdentifier, rightIdentifier)
+    }
+  }
+}
 
 export function compare(
   left: VersionInput,

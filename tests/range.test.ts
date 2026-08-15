@@ -17,7 +17,7 @@ import {
   simplifyRange,
   tryParseRange,
 } from '../src/range.ts'
-import { parse } from '../src/version.ts'
+import { normalize, parse } from '../src/version.ts'
 import rangeExclude from './fixtures/node-semver/range-exclude.ts'
 import rangeInclude from './fixtures/node-semver/range-include.ts'
 import rangeIntersections from './fixtures/node-semver/range-intersection.ts'
@@ -27,7 +27,7 @@ import versionGtRange from './fixtures/node-semver/version-gt-range.ts'
 import versionLtRange from './fixtures/node-semver/version-lt-range.ts'
 import versionNotGtRange from './fixtures/node-semver/version-not-gt-range.ts'
 import versionNotLtRange from './fixtures/node-semver/version-not-lt-range.ts'
-import type { RangeOptions } from '../src/types.ts'
+import type { RangeOptions } from '../src/comparator.ts'
 
 type RangeCase = readonly [string, string, unknown?]
 type RangeParseCase = readonly [string, string | null, unknown?]
@@ -39,12 +39,15 @@ function rangeOptions(value: unknown): RangeOptions {
   return value && typeof value === 'object' ? (value as RangeOptions) : {}
 }
 
+function minimumValue(range: string): string | null {
+  const minimum = findMinimumForRange(range)
+  return minimum ? normalize(minimum) : null
+}
+
 describe('range parsing and satisfaction', () => {
   it('parses reusable SemVerRange objects', () => {
     const range = parseRange('^1.2.3')
 
-    expect(range.raw).toBe('^1.2.3')
-    expect(range.normalized).toBe('>=1.2.3 <2.0.0-0')
     expect(parseRange(range)).toBe(range)
     expect(() => parseRange('not a range')).toThrow('Invalid comparator: not')
     expect(tryParseRange('not a range')).toBeNull()
@@ -52,7 +55,7 @@ describe('range parsing and satisfaction', () => {
     expect(normalizeRange(range)).toBe('>=1.2.3 <2.0.0-0')
     expect(satisfies('1.5.0', range)).toBe(true)
     expect(rangeToComparators(range)).toEqual([['>=1.2.3', '<2.0.0-0']])
-    expect(findMinimumForRange(range)).toBe('1.2.3')
+    expect(normalize(findMinimumForRange(range)!)).toBe('1.2.3')
     expect(rangesIntersect(range, '>=1.5.0')).toBe(true)
     expect(isRangeSubset(range, '1.x')).toBe(true)
   })
@@ -76,20 +79,16 @@ describe('range parsing and satisfaction', () => {
     expect(first.sets[0]).not.toBe(second.sets[0])
     expect(first.sets[0]![0]!.version).not.toBe(second.sets[0]![0]!.version)
 
-    first.raw = 'mutated'
-    first.normalized = '>1.2.9'
     first.options.includePrerelease = true
     first.sets[0]![0]!.operator = '>'
-    first.sets[0]![0]!.value = '>1.2.9'
     first.sets[0]![0]!.version!.patch = 9
 
-    expect(second.raw).toBe('^1.2.3')
-    expect(second.normalized).toBe('>=1.2.3 <2.0.0-0')
     expect(second.options.includePrerelease).toBeUndefined()
     expect(options.includePrerelease).toBeUndefined()
     expect(second.sets[0]![0]!.operator).toBe('>=')
     expect(second.sets[0]![0]!.value).toBe('>=1.2.3')
     expect(second.sets[0]![0]!.version!.patch).toBe(3)
+    expect(normalizeRange(first)).toBe('>1.2.9 <2.0.0-0')
   })
 
   it('accepts SemVer objects with optional identifier arrays', () => {
@@ -150,8 +149,8 @@ describe('range sets', () => {
     expect(findMaxSatisfying(versions, '^1.2.0')).toBe('1.5.0')
     expect(findMinSatisfying(versions, '^1.2.0')).toBe('1.2.3')
     expect(findMaxSatisfying(versions, 'invalid')).toBeNull()
-    expect(findMinimumForRange('>1.2.3')).toBe('1.2.4')
-    expect(findMinimumForRange('>1.2.3-alpha.1')).toBe('1.2.3-alpha.1.0')
+    expect(minimumValue('>1.2.3')).toBe('1.2.4')
+    expect(minimumValue('>1.2.3-alpha.1')).toBe('1.2.3-alpha.1.0')
     expect(findMinimumForRange('<0.0.0')).toBeNull()
   })
 
@@ -214,8 +213,19 @@ describe('range sets', () => {
     ]
 
     for (const [range, expected] of cases) {
-      expect(findMinimumForRange(range)).toBe(expected)
+      expect(minimumValue(range)).toBe(expected)
     }
+  })
+
+  it('returns an independent mutable minimum version', () => {
+    const range = parseRange('>=1.2.3')
+    const comparatorVersion = range.sets[0]![0]!.version!
+    const minimum = findMinimumForRange(range)!
+
+    expect(minimum).toEqual(comparatorVersion)
+    expect(minimum).not.toBe(comparatorVersion)
+    minimum.patch = 4
+    expect(comparatorVersion.patch).toBe(3)
   })
 
   it('matches every subset behavior fixture', () => {
@@ -270,6 +280,10 @@ describe('range sets', () => {
     )
     expect(simplifyRange(versions, '1 || 2 || 3')).toBe('*')
     expect(simplifyRange(versions, '2.1 || 2.2 || 2.3')).toBe('2.1.0 - 2.3.1')
+
+    const parsedRange = parseRange('1.x')
+    parsedRange.sets = parseRange('>=3.0.0').sets
+    expect(simplifyRange(versions, parsedRange)).toBe('>=3.0.0')
     expect(versions).toEqual(original)
   })
 })

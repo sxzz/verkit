@@ -28,6 +28,9 @@
   "sideEffects": false,
   "exports": {
     ".": "./dist/index.js",
+    "./comparator": "./dist/comparator.js",
+    "./range": "./dist/range.js",
+    "./version": "./dist/version.js",
     "./package.json": "./package.json"
   },
   "files": [
@@ -65,7 +68,6 @@
     "semver": "^7.8.5",
     "tsdown": "^0.22.14",
     "tsdown-preset-sxzz": "^0.7.0",
-    "tsnapi": "^1.2.0",
     "typescript": "~6.0.3",
     "vitest": "4.1.10"
   },

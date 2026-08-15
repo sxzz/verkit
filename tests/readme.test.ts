@@ -25,7 +25,7 @@ describe('README examples', () => {
     expect(normalize(version)).toBe('1.2.4-rc.1')
     expect(increment(version, 'minor')).toBe('1.3.0')
     expect(truncate(version, 'patch')).toBe('1.2.4')
-    expect(coerce('release 42.6.7.9', { rtl: true })).toBe('6.7.9')
+    expect(coerce('release 42.6.7.9', { rtl: true })?.major).toBe(6)
   })
 
   it('keeps comparison and range examples executable', () => {

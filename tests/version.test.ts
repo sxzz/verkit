@@ -18,20 +18,18 @@ import {
   parse,
   truncate,
   tryParse,
+  type IncrementOptions,
+  type IncrementType,
+  type PrereleaseIdentifier,
+  type SemVer,
+  type TruncationType,
+  type VersionDifference,
+  type VersionOptions,
 } from '../src/version.ts'
 import increments from './fixtures/node-semver/increments.ts'
 import invalidVersions from './fixtures/node-semver/invalid-versions.ts'
 import truncations from './fixtures/node-semver/truncations.ts'
 import validVersions from './fixtures/node-semver/valid-versions.ts'
-import type {
-  IncrementOptions,
-  IncrementType,
-  PrereleaseIdentifier,
-  SemVer,
-  TruncationType,
-  VersionDifference,
-  VersionOptions,
-} from '../src/types.ts'
 
 type ValidVersionCase = readonly [
   string,
@@ -116,7 +114,7 @@ describe('version parsing and accessors', () => {
     expect(normalizeFull(version)).toBe('1.2.4-beta.1+next')
     expect(normalize(version)).toBe('1.2.4-beta.1')
     expect(clean(version)).toBe('1.2.4-beta.1')
-    expect(coerce(version)).toBe('1.2.4-beta.1+next')
+    expect(coerce(version)).toBe(version)
     expect(increment(version, 'minor')).toBe('1.3.0')
     expect(truncate(version, 'patch')).toBe('1.2.4')
     expect(getMajor(version)).toBe(1)
@@ -209,11 +207,11 @@ describe('version operations', () => {
   })
 
   it('coerces left-to-right, right-to-left, and prerelease forms', () => {
-    expect(coerce('release 1.2.3.4')).toBe('1.2.3')
-    expect(coerce('release 1.2.3.4', { rtl: true })).toBe('2.3.4')
-    expect(coerce('v2')).toBe('2.0.0')
-    expect(coerce('1.2.3-rc.1+build.7', { includePrerelease: true })).toBe(
-      '1.2.3-rc.1+build.7',
+    expect(coerce('release 1.2.3.4')).toEqual(parse('1.2.3'))
+    expect(coerce('release 1.2.3.4', { rtl: true })).toEqual(parse('2.3.4'))
+    expect(coerce('v2')).toEqual(parse('2.0.0'))
+    expect(coerce('1.2.3-rc.1+build.7', { includePrerelease: true })).toEqual(
+      parse('1.2.3-rc.1+build.7'),
     )
     expect(coerce('not a version')).toBeNull()
     expect(coerce('9'.repeat(17))).toBeNull()

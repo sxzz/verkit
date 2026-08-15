@@ -1,50 +1,8 @@
-import {
-  FULL_PLAIN,
-  GREATER_LESS_THAN,
-  LOOSE_PLAIN,
-  safeRegex,
-} from './patterns.ts'
-import {
-  compareParsed,
-  formatComparableVersion,
-  parse,
-  tryParse,
-} from './version.ts'
-import type {
-  RangeOptions,
-  SemVer,
-  SemVerComparator,
-  VersionInput,
-} from '../types.ts'
-
-const STRICT_COMPARATOR = safeRegex(
-  String.raw`^${GREATER_LESS_THAN}\s*(${FULL_PLAIN})$|^$`,
-)
-const LOOSE_COMPARATOR = safeRegex(
-  String.raw`^${GREATER_LESS_THAN}\s*(${LOOSE_PLAIN})$|^$`,
-)
-
-export function parseComparator(
-  comparator: string,
-  options: RangeOptions = {},
-): SemVerComparator {
-  const normalized = comparator.trim().replaceAll(/\s+/g, ' ')
-  const match = normalized.match(
-    options.loose ? LOOSE_COMPARATOR : STRICT_COMPARATOR,
-  )
-  if (!match) throw new TypeError(`Invalid comparator: ${normalized}`)
-
-  const operator = (
-    match[1] === '=' ? '' : match[1] || ''
-  ) as SemVerComparator['operator']
-  const version = match[2] ? parse(match[2], options) : null
-  return {
-    operator,
-    options,
-    value: version ? `${operator}${formatComparableVersion(version)}` : '',
-    version,
-  }
-}
+import { compareParsed } from '../version/comparison.ts'
+import { tryParse } from '../version/parse.ts'
+import { formatComparator } from './parse.ts'
+import type { SemVer, VersionInput } from '../version/types.ts'
+import type { RangeOptions, SemVerComparator } from './types.ts'
 
 export function testParsedComparator(
   comparator: SemVerComparator,
@@ -118,15 +76,17 @@ export function parsedComparatorsIntersect(
     return testComparatorSet([left], right.version, options)
   }
 
+  const leftValue = formatComparator(left)
+  const rightValue = formatComparator(right)
   if (
     options.includePrerelease &&
-    (left.value === '<0.0.0-0' || right.value === '<0.0.0-0')
+    (leftValue === '<0.0.0-0' || rightValue === '<0.0.0-0')
   ) {
     return false
   }
   if (
     !options.includePrerelease &&
-    (left.value.startsWith('<0.0.0') || right.value.startsWith('<0.0.0'))
+    (leftValue.startsWith('<0.0.0') || rightValue.startsWith('<0.0.0'))
   ) {
     return false
   }

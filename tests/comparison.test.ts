@@ -3,6 +3,8 @@ import { describe, expect, it } from 'vitest'
 import {
   compare,
   compareBuild,
+  compareIdentifiers,
+  compareIdentifiersReversed,
   compareMain,
   comparePrerelease,
   compareReversed,
@@ -13,17 +15,13 @@ import {
   isLess,
   isLessOrEqual,
   isNotEqual,
+  parse,
   sort,
   sortReversed,
-} from '../src/comparison.ts'
-import {
-  compareIdentifiers,
-  compareIdentifiersReversed,
-} from '../src/identifiers.ts'
-import { parse } from '../src/version.ts'
+  type VersionOptions,
+} from '../src/version.ts'
 import comparisons from './fixtures/node-semver/comparisons.ts'
 import equality from './fixtures/node-semver/equality.ts'
-import type { VersionOptions } from '../src/types.ts'
 
 type ComparisonCase = readonly [string, string, unknown?]
 

@@ -3,7 +3,9 @@ import { describe, expect, it } from 'vitest'
 import {
   comparatorsIntersect,
   normalizeComparator,
+  parseComparator,
   satisfiesComparator,
+  tryParseComparator,
 } from '../src/comparator.ts'
 import { parse } from '../src/version.ts'
 import comparatorIntersections from './fixtures/node-semver/comparator-intersection.ts'
@@ -11,6 +13,28 @@ import comparatorIntersections from './fixtures/node-semver/comparator-intersect
 type IntersectionCase = readonly [string, string, boolean, boolean?]
 
 describe('comparators', () => {
+  it('parses reusable mutable comparators', () => {
+    const comparator = parseComparator('>=1.2.3')
+
+    expect(comparator).toEqual({
+      operator: '>=',
+      options: {},
+      value: '>=1.2.3',
+      version: parse('1.2.3'),
+    })
+    expect(parseComparator(comparator)).toBe(comparator)
+    expect(tryParseComparator(comparator)).toBe(comparator)
+    expect(tryParseComparator('not a comparator')).toBeNull()
+    expect(() => parseComparator('not a comparator')).toThrow(TypeError)
+
+    comparator.version!.patch = 4
+    expect(normalizeComparator(comparator)).toBe('>=1.2.4')
+    expect(satisfiesComparator('1.2.4', comparator)).toBe(true)
+    expect(comparatorsIntersect(comparator, parseComparator('<2.0.0'))).toBe(
+      true,
+    )
+  })
+
   it('normalizes and tests strict comparators', () => {
     expect(normalizeComparator(' >= 1.2.3+build ')).toBe('>=1.2.3')
     expect(satisfiesComparator('1.2.3+other', '>=1.2.3')).toBe(true)

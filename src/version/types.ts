@@ -2,10 +2,6 @@ export interface VersionOptions {
   loose?: boolean
 }
 
-export interface RangeOptions extends VersionOptions {
-  includePrerelease?: boolean
-}
-
 export interface CoerceOptions extends VersionOptions {
   includePrerelease?: boolean
   rtl?: boolean
@@ -26,21 +22,12 @@ export interface SemVer {
   build?: string[] | undefined
 }
 
-export interface SemVerComparator {
-  operator: '' | '<' | '<=' | '>' | '>='
-  options: RangeOptions
-  value: string
-  version: SemVer | null
-}
-
 export type VersionInput = SemVer | string
 
 export type Comparison = -1 | 0 | 1
 
 export type ComparisonOperator =
   '' | '!=' | '!==' | '<' | '<=' | '=' | '==' | '===' | '>' | '>='
-
-export type RangeDirection = '<' | '>'
 
 export type IncrementType =
   | 'major'

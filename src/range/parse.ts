@@ -1,8 +1,9 @@
+import { formatComparator, parseComparator } from '../comparator/parse.ts'
 import {
-  parseComparator,
   parsedComparatorsIntersect,
   testComparatorSet,
-} from './comparator.ts'
+} from '../comparator/set.ts'
+import { tryParse } from '../version/parse.ts'
 import {
   BUILD,
   GREATER_LESS_THAN,
@@ -12,28 +13,19 @@ import {
   safeRegex,
   XRANGE_PLAIN,
   XRANGE_PLAIN_LOOSE,
-} from './range-patterns.ts'
-import { tryParse } from './version.ts'
-import type {
-  RangeOptions,
-  SemVer,
-  SemVerComparator,
-  VersionInput,
-} from '../types.ts'
-
-export interface SemVerRange {
-  normalized: string
-  options: RangeOptions
-  raw: string
-  sets: SemVerComparator[][]
-}
-
-export type RangeInput = SemVerRange | string
+} from '../version/patterns.ts'
+import type { RangeOptions, SemVerComparator } from '../comparator/types.ts'
+import type { SemVer, VersionInput } from '../version/types.ts'
+import type { RangeInput, SemVerRange } from './types.ts'
 
 export type ParseRangeInput = (
   range: RangeInput,
   options?: RangeOptions,
 ) => SemVerRange
+
+export function formatRange(range: SemVerRange): string {
+  return range.sets.map((set) => set.map(formatComparator).join(' ')).join('||')
+}
 
 const BUILD_STRIP = new RegExp(BUILD, 'g')
 const BUILD_SAFE = safeRegex(BUILD)
@@ -313,13 +305,15 @@ export function parseRange(
 ): SemVerRange {
   if (typeof range !== 'string') return range
   const parsedOptions = { ...options }
-  const raw = range.trim().replaceAll(/\s+/g, ' ')
-  let sets = raw
+  const normalizedRange = range.trim().replaceAll(/\s+/g, ' ')
+  let sets = normalizedRange
     .split('||')
     .map((part) => parseSimpleRange(part.trim(), parsedOptions))
     .filter((set) => set.length)
   if (!sets.length) {
-    throw new TypeError(`Range contains no valid comparator sets: ${raw}`)
+    throw new TypeError(
+      `Range contains no valid comparator sets: ${normalizedRange}`,
+    )
   }
 
   if (sets.length > 1) {
@@ -333,11 +327,7 @@ export function parseRange(
   }
 
   return {
-    normalized: sets
-      .map((set) => set.map((comparator) => comparator.value).join(' '))
-      .join('||'),
     options: parsedOptions,
-    raw,
     sets,
   }
 }
