@@ -179,13 +179,13 @@ better.
 
 | Operation                 | verkit ops/s | semver ops/s | Faster       |
 | ------------------------- | -----------: | -----------: | ------------ |
-| Parse and normalize       |        1.89M |        1.59M | verkit 1.19× |
-| Compare                   |        1.58M |        1.03M | verkit 1.53× |
-| Compare parsed versions   |       11.70M |        5.44M | verkit 2.15× |
-| Increment                 |        1.79M |        1.00M | verkit 1.79× |
-| Coerce                    |        1.40M |        1.06M | verkit 1.32× |
-| Satisfy uncached ranges   |        81.7K |        56.3K | verkit 1.45× |
-| Satisfy pre-parsed inputs |        5.34M |        2.05M | verkit 2.60× |
+| Parse and normalize       |        3.67M |        3.26M | verkit 1.13× |
+| Compare                   |        3.09M |        2.36M | verkit 1.31× |
+| Compare parsed versions   |       40.59M |       28.62M | verkit 1.42× |
+| Increment                 |        3.38M |        2.03M | verkit 1.66× |
+| Coerce                    |        2.77M |        2.32M | verkit 1.19× |
+| Satisfy uncached ranges   |       148.5K |       122.3K | verkit 1.21× |
+| Satisfy pre-parsed inputs |       22.91M |        7.20M | verkit 3.18× |
 
 Range benchmarks either cycle through 1,001 inputs to avoid cache hits or
 parse once and reuse the resulting objects.

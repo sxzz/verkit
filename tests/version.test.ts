@@ -99,6 +99,9 @@ describe('version parsing and accessors', () => {
     expect(() => parse('9007199254740992.0.0')).toThrow(
       'Invalid major version: 9007199254740992',
     )
+    expect(parse('1.2.3-9007199254740991').prerelease).toEqual([
+      '9007199254740991',
+    ])
     expect(() => parse(`1.2.3+${'x'.repeat(256)}`)).toThrow(
       'Version exceeds the maximum length of 256 characters',
     )
@@ -181,6 +184,8 @@ describe('version parsing and accessors', () => {
     expect(() => getMajor('not a version')).toThrow(TypeError)
     expect(() => getMinor('not a version')).toThrow(TypeError)
     expect(() => getPatch('not a version')).toThrow(TypeError)
+    expect(getPrerelease('not a version')).toBeNull()
+    expect(getBuild('not a version')).toBeNull()
     expect(() => difference('1.0.0', 'nope')).toThrow(TypeError)
   })
 })
@@ -207,12 +212,20 @@ describe('version operations', () => {
   })
 
   it('coerces left-to-right, right-to-left, and prerelease forms', () => {
+    expect(coerce(123)).toEqual(parse('123.0.0'))
     expect(coerce('release 1.2.3.4')).toEqual(parse('1.2.3'))
     expect(coerce('release 1.2.3.4', { rtl: true })).toEqual(parse('2.3.4'))
+    expect(coerce('1.2.3-ignored', { rtl: true })).toEqual(parse('1.2.3'))
     expect(coerce('v2')).toEqual(parse('2.0.0'))
     expect(coerce('1.2.3-rc.1+build.7', { includePrerelease: true })).toEqual(
       parse('1.2.3-rc.1+build.7'),
     )
+    expect(
+      coerce('release 1.2.3-rc.1+build.7', {
+        includePrerelease: true,
+        rtl: true,
+      }),
+    ).toEqual(parse('1.2.3-rc.1+build.7'))
     expect(coerce('not a version')).toBeNull()
     expect(coerce('9'.repeat(17))).toBeNull()
   })

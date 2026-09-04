@@ -9,6 +9,8 @@ export function runCommonOperations(
     satisfies(version, range),
     compare(version, '1.0.0'),
     inc(version, 'patch'),
+    /* v8 ignore start -- @preserve */
     coerce(version)?.major ?? null,
+    /* v8 ignore stop -- @preserve */
   ]
 }

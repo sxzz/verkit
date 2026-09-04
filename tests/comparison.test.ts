@@ -72,19 +72,27 @@ describe('version comparison', () => {
     expect(comparePrerelease('1.2.3-alpha', '9.9.9-beta')).toBe(-1)
     expect(compare('1.2.3+2', '1.2.3+1')).toBe(0)
     expect(compareBuild('1.2.3+2', '1.2.3+1')).toBe(1)
+    expect(compareBuild('1.2.3+one', '1.2.3+one')).toBe(0)
+    expect(compareBuild('1.2.3+one', '1.2.3')).toBe(1)
   })
 
   it('supports semver and identity operators', () => {
+    expect(compareWithOperator('1.2.3', '', '1.2.3')).toBe(true)
     expect(compareWithOperator('v1.2.3', '==', '1.2.3')).toBe(true)
     expect(compareWithOperator('v1.2.3', '===', '1.2.3')).toBe(false)
     expect(compareWithOperator('v1.2.3', '!==', '1.2.3')).toBe(true)
+    expect(compareWithOperator('2.0.0', '!=', '1.0.0')).toBe(true)
     expect(compareWithOperator('2.0.0', '>', '1.0.0')).toBe(true)
+    expect(compareWithOperator('2.0.0', '>=', '2.0.0')).toBe(true)
+    expect(compareWithOperator('1.0.0', '<', '2.0.0')).toBe(true)
+    expect(compareWithOperator('2.0.0', '<=', '2.0.0')).toBe(true)
     expect(() =>
       compareWithOperator('1.0.0', 'not-an-operator' as never, '1.0.0'),
     ).toThrow(TypeError)
   })
 
   it('compares identifiers using semver precedence', () => {
+    expect(compareIdentifiers(1, 1)).toBe(0)
     expect(compareIdentifiers(1, 2)).toBe(-1)
     expect(compareIdentifiers('2', 'alpha')).toBe(-1)
     expect(compareIdentifiers('beta', 'alpha')).toBe(1)

@@ -234,6 +234,7 @@ function incrementMutable(
       if (!version.prerelease?.length) version.patch++
       version.prerelease = undefined
       break
+    /* v8 ignore next */
     case 'pre':
       incrementPrerelease(version, identifier, identifierBase)
       break

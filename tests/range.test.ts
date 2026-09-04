@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-
+import { parseComparator, type RangeOptions } from '../src/comparator.ts'
 import {
   findMaxSatisfying,
   findMinimumForRange,
@@ -27,7 +27,6 @@ import versionGtRange from './fixtures/node-semver/version-gt-range.ts'
 import versionLtRange from './fixtures/node-semver/version-lt-range.ts'
 import versionNotGtRange from './fixtures/node-semver/version-not-gt-range.ts'
 import versionNotLtRange from './fixtures/node-semver/version-not-lt-range.ts'
-import type { RangeOptions } from '../src/comparator.ts'
 
 type RangeCase = readonly [string, string, unknown?]
 type RangeParseCase = readonly [string, string | null, unknown?]
@@ -149,6 +148,7 @@ describe('range sets', () => {
     expect(findMaxSatisfying(versions, '^1.2.0')).toBe('1.5.0')
     expect(findMinSatisfying(versions, '^1.2.0')).toBe('1.2.3')
     expect(findMaxSatisfying(versions, 'invalid')).toBeNull()
+    expect(findMinSatisfying(versions, 'invalid')).toBeNull()
     expect(minimumValue('>1.2.3')).toBe('1.2.4')
     expect(minimumValue('>1.2.3-alpha.1')).toBe('1.2.3-alpha.1.0')
     expect(findMinimumForRange('<0.0.0')).toBeNull()
@@ -228,6 +228,14 @@ describe('range sets', () => {
     expect(comparatorVersion.patch).toBe(3)
   })
 
+  it('ignores wildcard comparators in mutable parsed ranges', () => {
+    const range = parseRange('>1.2.3')
+    range.sets[0]!.unshift(parseComparator(''))
+
+    expect(normalize(findMinimumForRange(range)!)).toBe('1.2.4')
+    expect(isRangeSubset(range, '>1.0.0')).toBe(true)
+  })
+
   it('matches every subset behavior fixture', () => {
     for (const row of rangeSubsets as readonly RangeSubsetCase[]) {
       const [subset, superset, expected, rawOptions] = row
@@ -235,6 +243,7 @@ describe('range sets', () => {
         expected,
       )
     }
+    expect(isRangeSubset('<2.0.0', '1.0.0')).toBe(false)
   })
 
   it('simplifies over a copied array', () => {
@@ -284,6 +293,7 @@ describe('range sets', () => {
     const parsedRange = parseRange('1.x')
     parsedRange.sets = parseRange('>=3.0.0').sets
     expect(simplifyRange(versions, parsedRange)).toBe('>=3.0.0')
+    expect(simplifyRange(versions, parseRange('*'))).toBe('*')
     expect(versions).toEqual(original)
   })
 })

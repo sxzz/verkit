@@ -7,7 +7,7 @@ import {
   satisfies as semverSatisfies,
   valid as semverValid,
 } from 'semver'
-import { bench, describe } from 'vitest'
+import { test } from 'vitest'
 import {
   coerce,
   compare,
@@ -38,69 +38,83 @@ const semverParsedComplexRange = new NodeSemVerRange(complexRange)
 let verkitRangeIndex = 0
 let semverRangeIndex = 0
 
-describe('parse and normalize', () => {
-  bench('verkit', () => {
-    normalize(version)
-  })
-  bench('semver', () => {
-    semverValid(version)
-  })
+test('parse and normalize', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      normalize(version)
+    }),
+    bench('semver', () => {
+      semverValid(version)
+    }),
+  )
 })
 
-describe('compare', () => {
-  bench('verkit', () => {
-    compare(version, stableVersion)
-  })
-  bench('semver', () => {
-    semverCompare(version, stableVersion)
-  })
+test('compare', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      compare(version, stableVersion)
+    }),
+    bench('semver', () => {
+      semverCompare(version, stableVersion)
+    }),
+  )
 })
 
-describe('compare parsed versions', () => {
-  bench('verkit', () => {
-    compare(parsedVersion, parsedStableVersion)
-  })
-  bench('semver', () => {
-    semverCompare(semverParsedVersion, semverParsedStableVersion)
-  })
+test('compare parsed versions', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      compare(parsedVersion, parsedStableVersion)
+    }),
+    bench('semver', () => {
+      semverCompare(semverParsedVersion, semverParsedStableVersion)
+    }),
+  )
 })
 
-describe('increment', () => {
-  bench('verkit', () => {
-    increment(version, 'prerelease')
-  })
-  bench('semver', () => {
-    semverIncrement(version, 'prerelease')
-  })
+test('increment', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      increment(version, 'prerelease')
+    }),
+    bench('semver', () => {
+      semverIncrement(version, 'prerelease')
+    }),
+  )
 })
 
-describe('coerce', () => {
-  bench('verkit', () => {
-    coerce(coercionInput, { includePrerelease: true })
-  })
-  bench('semver', () => {
-    semverCoerce(coercionInput, { includePrerelease: true })
-  })
+test('coerce', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      coerce(coercionInput, { includePrerelease: true })
+    }),
+    bench('semver', () => {
+      semverCoerce(coercionInput, { includePrerelease: true })
+    }),
+  )
 })
 
-describe('satisfies uncached ranges', () => {
-  bench('verkit', () => {
-    const range = uncachedRanges[verkitRangeIndex]!
-    verkitRangeIndex = (verkitRangeIndex + 1) % uncachedRanges.length
-    satisfies(stableVersion, range)
-  })
-  bench('semver', () => {
-    const range = uncachedRanges[semverRangeIndex]!
-    semverRangeIndex = (semverRangeIndex + 1) % uncachedRanges.length
-    semverSatisfies(stableVersion, range)
-  })
+test('satisfies uncached ranges', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      const range = uncachedRanges[verkitRangeIndex]!
+      verkitRangeIndex = (verkitRangeIndex + 1) % uncachedRanges.length
+      satisfies(stableVersion, range)
+    }),
+    bench('semver', () => {
+      const range = uncachedRanges[semverRangeIndex]!
+      semverRangeIndex = (semverRangeIndex + 1) % uncachedRanges.length
+      semverSatisfies(stableVersion, range)
+    }),
+  )
 })
 
-describe('satisfies pre-parsed inputs', () => {
-  bench('verkit', () => {
-    satisfies(parsedStableVersion, parsedComplexRange)
-  })
-  bench('semver', () => {
-    semverSatisfies(semverParsedStableVersion, semverParsedComplexRange)
-  })
+test('satisfies pre-parsed inputs', async ({ bench }) => {
+  await bench.compare(
+    bench('verkit', () => {
+      satisfies(parsedStableVersion, parsedComplexRange)
+    }),
+    bench('semver', () => {
+      semverSatisfies(semverParsedStableVersion, semverParsedComplexRange)
+    }),
+  )
 })

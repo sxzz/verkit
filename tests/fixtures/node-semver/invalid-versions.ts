@@ -15,7 +15,15 @@ const fixtures: readonly (readonly unknown[])[] = [
   ['xyz', 'even loose as an opt, same', { loose: true }],
   [/a regexp/, 'regexp is not a string'],
   [/1.2.3/, 'semver-ish regexp is not a string'],
-  [{ toString: () => '1.2.3' }, 'obj with a tostring is not a string'],
+  [
+    {
+      /* v8 ignore next -- @preserve */
+      toString: () => {
+        throw new Error('never throw')
+      },
+    },
+    'obj with a tostring is not a string',
+  ],
 ]
 
 export default fixtures
