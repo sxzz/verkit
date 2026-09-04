@@ -3,6 +3,7 @@
 [![Open on npmx][npmx-version-src]][npmx-href]
 [![npm downloads][npmx-downloads-src]][npmx-href]
 [![Unit Test][unit-test-src]][unit-test-href]
+[![Codecov][codecov-src]][codecov-href]
 
 Fast, zero-dependency SemVer for ESM and TypeScript, with functional,
 tree-shakeable APIs.
@@ -215,3 +216,5 @@ under the ISC license; see [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).
 [node-semver]: https://github.com/npm/node-semver
 [unit-test-src]: https://github.com/sxzz/verkit/actions/workflows/unit-test.yml/badge.svg
 [unit-test-href]: https://github.com/sxzz/verkit/actions/workflows/unit-test.yml
+[codecov-src]: https://codecov.io/gh/sxzz/verkit/graph/badge.svg?token=hBBtxizmt9
+[codecov-href]: https://codecov.io/gh/sxzz/verkit
