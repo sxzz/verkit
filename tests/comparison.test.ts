@@ -10,10 +10,10 @@ import {
   compareReversed,
   compareWithOperator,
   isEqual,
-  isGreater,
-  isGreaterOrEqual,
-  isLess,
-  isLessOrEqual,
+  isGreaterThan,
+  isGreaterThanOrEqual,
+  isLessThan,
+  isLessThanOrEqual,
   isNotEqual,
   parse,
   sort,
@@ -38,7 +38,7 @@ describe('version comparison', () => {
     expect(compare(left, right)).toBe(1)
     expect(compareBuild(left, '2.0.0+one')).toBe(1)
     expect(compareBuild(right, { ...right, build: ['one'] })).toBe(-1)
-    expect(isGreater(left, right)).toBe(true)
+    expect(isGreaterThan(left, right)).toBe(true)
   })
 
   it('orders every comparison fixture', () => {
@@ -47,10 +47,10 @@ describe('version comparison', () => {
       const options = versionOptions(rawOptions)
       expect(compare(left, right, options)).toBe(1)
       expect(compareReversed(left, right, options)).toBe(-1)
-      expect(isGreater(left, right, options)).toBe(true)
-      expect(isGreaterOrEqual(left, right, options)).toBe(true)
-      expect(isLess(right, left, options)).toBe(true)
-      expect(isLessOrEqual(right, left, options)).toBe(true)
+      expect(isGreaterThan(left, right, options)).toBe(true)
+      expect(isGreaterThanOrEqual(left, right, options)).toBe(true)
+      expect(isLessThan(right, left, options)).toBe(true)
+      expect(isLessThanOrEqual(right, left, options)).toBe(true)
       expect(isNotEqual(left, right, options)).toBe(true)
     }
   })
@@ -61,6 +61,8 @@ describe('version comparison', () => {
       const options = versionOptions(rawOptions)
       expect(compare(left, right, options)).toBe(0)
       expect(isEqual(left, right, options)).toBe(true)
+      expect(isGreaterThanOrEqual(left, right, options)).toBe(true)
+      expect(isLessThanOrEqual(left, right, options)).toBe(true)
       expect(compareWithOperator(left, '=', right, options)).toBe(true)
     }
   })

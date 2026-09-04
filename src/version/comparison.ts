@@ -151,7 +151,7 @@ export function isNotEqual(
   return compare(left, right, options) !== 0
 }
 
-export function isGreater(
+export function isGreaterThan(
   left: VersionInput,
   right: VersionInput,
   options: VersionOptions = {},
@@ -159,7 +159,7 @@ export function isGreater(
   return compare(left, right, options) > 0
 }
 
-export function isGreaterOrEqual(
+export function isGreaterThanOrEqual(
   left: VersionInput,
   right: VersionInput,
   options: VersionOptions = {},
@@ -167,7 +167,7 @@ export function isGreaterOrEqual(
   return compare(left, right, options) >= 0
 }
 
-export function isLess(
+export function isLessThan(
   left: VersionInput,
   right: VersionInput,
   options: VersionOptions = {},
@@ -175,13 +175,26 @@ export function isLess(
   return compare(left, right, options) < 0
 }
 
-export function isLessOrEqual(
+export function isLessThanOrEqual(
   left: VersionInput,
   right: VersionInput,
   options: VersionOptions = {},
 ): boolean {
   return compare(left, right, options) <= 0
 }
+
+/** @deprecated Use {@link isGreaterThan} instead. */
+export const isGreater: typeof isGreaterThan = isGreaterThan
+
+/** @deprecated Use {@link isGreaterThanOrEqual} instead. */
+export const isGreaterOrEqual: typeof isGreaterThanOrEqual =
+  isGreaterThanOrEqual
+
+/** @deprecated Use {@link isLessThan} instead. */
+export const isLess: typeof isLessThan = isLessThan
+
+/** @deprecated Use {@link isLessThanOrEqual} instead. */
+export const isLessOrEqual: typeof isLessThanOrEqual = isLessThanOrEqual
 
 export function sort<T extends VersionInput>(
   versions: readonly T[],

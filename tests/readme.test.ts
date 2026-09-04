@@ -6,6 +6,7 @@ import {
   compareBuild,
   findMaxSatisfying,
   increment,
+  isGreaterThan,
   normalize,
   normalizeFull,
   normalizeRange,
@@ -31,6 +32,7 @@ describe('README examples', () => {
   it('keeps comparison and range examples executable', () => {
     expect(compare('1.0.0+one', '1.0.0+two')).toBe(0)
     expect(compareBuild('1.0.0+one', '1.0.0+two')).toBe(-1)
+    expect(isGreaterThan('2.0.0', '1.0.0')).toBe(true)
     expect(sortReversed(['1.0.0', '2.0.0'])).toEqual(['2.0.0', '1.0.0'])
     const range = parseRange('^1.2.3')
     expect(normalizeRange(range)).toBe('>=1.2.3 <2.0.0-0')
