@@ -2,7 +2,6 @@
   "name": "verkit",
   "type": "module",
   "version": "0.4.0",
-  "packageManager": "pnpm@11.20.0",
   "description": "Fast, zero-dependency SemVer for ESM and TypeScript, with functional, tree-shakeable APIs.",
   "author": "Kevin Deng <sxzz@sxzz.moe>",
   "license": "MIT",
@@ -42,6 +41,13 @@
   "engines": {
     "node": ">=18.12.0"
   },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.3.2",
+      "onFail": "download"
+    }
+  },
   "scripts": {
     "lint": "eslint --cache .",
     "lint:fix": "pnpm run lint --fix",
@@ -56,20 +62,20 @@
     "prepublishOnly": "pnpm run build"
   },
   "devDependencies": {
-    "@sxzz/eslint-config": "^8.4.0",
+    "@sxzz/eslint-config": "^8.6.0",
     "@sxzz/prettier-config": "^2.3.2",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.4.1",
     "@types/semver": "^7.8.0",
     "@typescript/native-preview": "npm:typescript@7.0.2",
-    "bumpp": "^12.1.1",
-    "eslint": "^10.8.0",
+    "bumpp": "^12.3.0",
+    "eslint": "^10.9.1",
     "prettier": "^3.9.6",
-    "rolldown": "^1.2.2",
+    "rolldown": "^1.2.7",
     "semver": "^7.8.5",
-    "tsdown": "^0.22.14",
+    "tsdown": "^0.23.0",
     "tsdown-preset-sxzz": "^0.7.0",
     "typescript": "~6.0.3",
-    "vitest": "4.1.10"
+    "vitest": "5.0.0"
   },
   "prettier": "@sxzz/prettier-config"
 }
