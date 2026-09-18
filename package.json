@@ -44,7 +44,7 @@
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "12.3.2",
+      "version": "12.4.2",
       "onFail": "download"
     }
   },
@@ -63,20 +63,20 @@
   },
   "devDependencies": {
     "@sxzz/eslint-config": "^8.6.0",
-    "@sxzz/prettier-config": "^2.3.2",
-    "@types/node": "^26.4.1",
+    "@sxzz/prettier-config": "^2.3.3",
+    "@types/node": "^26.6.1",
     "@types/semver": "^7.8.0",
     "@typescript/native-preview": "npm:typescript@7.0.2",
-    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/coverage-v8": "^5.0.1",
     "bumpp": "^12.3.0",
-    "eslint": "^10.9.1",
-    "prettier": "^3.9.6",
-    "rolldown": "^1.2.7",
+    "eslint": "^10.10.0",
+    "prettier": "^3.9.8",
+    "rolldown": "^1.2.9",
     "semver": "^7.8.5",
     "tsdown": "^0.23.0",
-    "tsdown-preset-sxzz": "^0.7.0",
+    "tsdown-preset-sxzz": "^0.7.1",
     "typescript": "~6.0.3",
-    "vitest": "5.0.0"
+    "vitest": "5.0.1"
   },
   "prettier": "@sxzz/prettier-config"
 }
