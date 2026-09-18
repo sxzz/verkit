@@ -183,19 +183,6 @@ export function isLessThanOrEqual(
   return compare(left, right, options) <= 0
 }
 
-/** @deprecated Use {@link isGreaterThan} instead. */
-export const isGreater: typeof isGreaterThan = isGreaterThan
-
-/** @deprecated Use {@link isGreaterThanOrEqual} instead. */
-export const isGreaterOrEqual: typeof isGreaterThanOrEqual =
-  isGreaterThanOrEqual
-
-/** @deprecated Use {@link isLessThan} instead. */
-export const isLess: typeof isLessThan = isLessThan
-
-/** @deprecated Use {@link isLessThanOrEqual} instead. */
-export const isLessOrEqual: typeof isLessThanOrEqual = isLessThanOrEqual
-
 export function sort<T extends VersionInput>(
   versions: readonly T[],
   options: VersionOptions = {},
